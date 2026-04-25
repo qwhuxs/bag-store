@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -12,12 +13,14 @@ enum Role {
 }
 
 model User {
-  id       String    @id @default(cuid())
-  email    String    @unique
+  id       String  @id @default(cuid())
+  email    String  @unique
   name     String?
   age      Int?
   image    String?
-  role     Role      @default(USER)
+  password String?
+  role     Role    @default(USER)
+
   accounts Account[]
   orders   Order[]
   reviews  Review[]
@@ -29,18 +32,21 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  user              User   @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
   description String
   price       Float
   image       String
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-  reviews     Review[]
+
+  category Category @relation(fields: [categoryId], references: [id])
+
+  reviews Review[]
 }
 
 model Category {
@@ -49,36 +55,21 @@ model Category {
   products Product[]
 }
 
-model Cart {
-  id        String @id @default(cuid())
-  userId    String
-  productId String
-  quantity  Int
-}
-
 model Order {
-  id        String        @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
-  user      User          @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   total     Float
-  createdAt DateTime      @default(now())
-  details   OrderDetail[]
-}
-
-model OrderDetail {
-  id        String @id @default(cuid())
-  orderId   String
-  order     Order  @relation(fields: [orderId], references: [id])
-  productId String
-  quantity  Int
+  createdAt DateTime @default(now())
 }
 
 model Review {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   userId    String
-  user      User    @relation(fields: [userId], references: [id])
   productId String
-  product   Product @relation(fields: [productId], references: [id])
   rating    Int
   comment   String
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
