@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import AddToCartButton from "@/components/AddToCartButton"
 import ReviewForm from "@/components/ReviewForm"
+import Image from "next/image" 
 
 export default async function ProductPage({
   params,
@@ -68,9 +69,13 @@ export default async function ProductPage({
             transition duration-500
           " />
 
-          <img
+          {/* ✅ ОНОВЛЕНО */}
+          <Image
             src={product.image}
             alt={product.name}
+            fill
+            priority
+            sizes="100vw"
             className="
               h-[85%]
               object-contain
