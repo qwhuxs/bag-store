@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import ProductSlider from "@/components/ProductSlider"
+import Image from "next/image" 
 
 export default async function HomePage() {
   const products = await prisma.product.findMany({
@@ -26,7 +27,7 @@ export default async function HomePage() {
         p-12 text-center text-white mb-14 shadow-lg
       ">
         <h1 className="text-4xl font-bold mb-4">
-          Стильні сумки від Euphoria
+          Стильні сумки, рюкзаки та аксесуари від Euphoria
         </h1>
 
         <p className="mb-6 text-lg opacity-90">
@@ -35,6 +36,7 @@ export default async function HomePage() {
 
         <Link
           href="/catalog"
+          aria-label="Перейти до каталогу сумок" 
           className="
             bg-white text-black px-6 py-3 rounded-lg
             font-medium hover:scale-105 transition
@@ -53,7 +55,7 @@ export default async function HomePage() {
       ">
         <div className="relative z-10 max-w-xl">
           <h2 className="text-4xl font-extrabold mb-3">
-            🔥 SALE до -10%
+            🔥 Знижки до -10% на популярні сумки
           </h2>
 
           <p className="mb-5 text-lg opacity-90">
@@ -96,7 +98,6 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* ✅ ТУТ ФІКС */}
       <ProductSlider products={sliderProducts} />
 
       {/* 🎯 КАТЕГОРІЇ */}
@@ -112,6 +113,7 @@ export default async function HomePage() {
 
       <div className="overflow-x-auto pb-4">
         <div className="flex gap-6 w-max">
+
           {[
             { name: "Рюкзаки", img: "/images/foto1.jpg" },
             { name: "Сумки через плече", img: "/images/foto20.jpg" },
@@ -128,10 +130,15 @@ export default async function HomePage() {
                 shadow-md hover:shadow-xl transition
               "
             >
-              <img
+
+              {/* ✅ ЗАМІНЕНО IMG */}
+              <Image
                 src={cat.img}
+                alt={cat.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 260px"
                 className="
-                  absolute w-full h-full object-cover
+                  absolute object-cover
                   group-hover:scale-110 transition duration-500
                 "
               />
@@ -147,8 +154,10 @@ export default async function HomePage() {
                   {cat.name}
                 </span>
               </div>
+
             </Link>
           ))}
+
         </div>
       </div>
 
