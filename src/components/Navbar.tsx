@@ -6,6 +6,8 @@ import { useSession, signOut } from "next-auth/react"
 export default function Navbar() {
   const { data: session } = useSession()
 
+  const isAdmin = (session?.user as any)?.role === "ADMIN"
+
   return (
     <nav className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -33,6 +35,47 @@ export default function Navbar() {
             Категорії
           </Link>
 
+          {/* 🔥 НОВІ СЕКЦІЇ */}
+          <Link href="/hits" className="hover:text-[#ff6b6b] transition">
+            🔥 Хіти
+          </Link>
+
+          <Link href="/new" className="hover:text-[#3F5F56] transition">
+            🆕 Новинки
+          </Link>
+
+          <Link href="/sale" className="hover:text-green-600 transition">
+            💰 Знижки
+          </Link>
+
+          {/* 🔥 ADMIN MENU */}
+          {isAdmin && (
+            <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
+
+              <Link
+                href="/admin/products"
+                className="text-green-600 hover:underline"
+              >
+                ⚙️ Товари
+              </Link>
+
+              <Link
+                href="/admin/orders"
+                className="text-green-600 hover:underline"
+              >
+                📦 Замовлення
+              </Link>
+
+              <Link
+                href="/admin/categories"
+                className="text-green-600 hover:underline"
+              >
+                🗂 Категорії
+              </Link>
+
+            </div>
+          )}
+
           {!session ? (
             <>
               <Link href="/login" className="hover:text-[#D9A5A0] transition">
@@ -53,12 +96,21 @@ export default function Navbar() {
               </Link>
 
               <Link href="/profile" className="hover:text-[#D9A5A0] transition">
-  👤 Профіль
-</Link>
+                👤 Профіль
+              </Link>
 
-              <span className="text-gray-600 text-xs">
-                {session.user?.email}
-              </span>
+              <div className="flex items-center gap-2 text-xs">
+
+                <span className="text-gray-600">
+                  {session.user?.email}
+                </span>
+
+                {isAdmin && (
+                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                    ADMIN
+                  </span>
+                )}
+              </div>
 
               <button
                 onClick={() => signOut()}
