@@ -93,6 +93,10 @@ model Product {
 
   stock Int @default(10)
 
+  createdAt DateTime @default(now())
+  discount  Int?     
+  sales     Int @default(0) 
+
   category Category @relation(fields: [categoryId], references: [id])
 
   reviews Review[]
