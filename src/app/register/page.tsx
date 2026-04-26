@@ -2,12 +2,9 @@
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 
 export default function RegisterPage() {
-  const router = useRouter()
-
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [age, setAge] = useState("")
@@ -37,6 +34,19 @@ export default function RegisterPage() {
       }),
     })
 
+    const login = await signIn("credentials", {
+  email,
+  password,
+  redirect: false,
+})
+
+if (login?.error) {
+  toast.error("Помилка входу")
+  return
+}
+
+window.location.href = "/profile"
+
     const data = await res.json()
 
     if (!res.ok) {
@@ -47,19 +57,11 @@ export default function RegisterPage() {
 
     toast.success("Реєстрація успішна 🎉")
 
-    const login = await signIn("credentials", {
+    await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      callbackUrl: "/profile",
     })
-
-    if (login?.error) {
-      toast.error("Помилка входу")
-      router.push("/login")
-      return
-    }
-
-    window.location.href = "/profile"
   }
 
   return (

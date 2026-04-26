@@ -10,23 +10,24 @@ import bcrypt from "bcrypt"
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
 
+  session: {
+    strategy: "jwt",
+  },
+
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
-      allowDangerousEmailAccountLinking: true,
     }),
 
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,
       clientSecret: process.env.GOOGLE_SECRET!,
-      allowDangerousEmailAccountLinking: true,
     }),
 
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-      allowDangerousEmailAccountLinking: true,
     }),
 
     CredentialsProvider({
@@ -56,8 +57,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  session: {
-    strategy: "jwt",
+  callbacks: {
+async jwt({ token, user }) {
+  if (user) {
+    const u = user as any
+    token.id = u.id
+    token.email = u.email
+  }
+  return token
+},
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string
+        session.user.email = token.email as string
+      }
+      return session
+    },
   },
 
   pages: {
@@ -66,5 +82,4 @@ export const authOptions: NextAuthOptions = {
 }
 
 const handler = NextAuth(authOptions)
-
 export { handler as GET, handler as POST }

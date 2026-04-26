@@ -1,6 +1,6 @@
 "use client"
 
-import { signIn, getSession } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
@@ -33,7 +33,6 @@ export default function LoginPage() {
     setErrors(newErrors)
     return ok
   }
-
 const handleLogin = async () => {
   if (!validate()) return
 
@@ -41,6 +40,7 @@ const handleLogin = async () => {
     email,
     password,
     redirect: false,
+    callbackUrl: "/profile",
   })
 
   if (res?.error) {
@@ -52,30 +52,15 @@ const handleLogin = async () => {
 }
 
   return (
-    <div className="
-      flex items-center justify-center
-      min-h-[calc(100vh-80px)]
-      bg-gradient-to-br from-[#f5f3f2] to-[#e9e4e1]
-      px-4 py-10
-    ">
+    <div className="flex items-center justify-center min-h-[calc(100vh-80px)] bg-gradient-to-br from-[#f5f3f2] to-[#e9e4e1] px-4 py-10">
 
-      <div className="
-        w-full max-w-md
-        bg-white
-        p-8
-        rounded-2xl
-        shadow-xl
-        border border-gray-100
-      ">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
 
-        <h1 className="
-          text-3xl font-bold text-center mb-6
-          bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0]
-          text-transparent bg-clip-text
-        ">
+        <h1 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] text-transparent bg-clip-text">
           Вхід
         </h1>
 
+        {/* EMAIL */}
         <input
           placeholder="Email"
           value={email}
@@ -83,11 +68,10 @@ const handleLogin = async () => {
           className="w-full border p-3 rounded-lg"
         />
         {errors.email && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.email}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
         )}
 
+        {/* PASSWORD */}
         <div className="relative mt-4">
           <input
             type={showPassword ? "text" : "password"}
@@ -107,11 +91,10 @@ const handleLogin = async () => {
         </div>
 
         {errors.password && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.password}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.password}</p>
         )}
 
+        {/* REMEMBER */}
         <label className="flex items-center gap-2 mt-4 text-sm">
           <input
             type="checkbox"
@@ -121,19 +104,23 @@ const handleLogin = async () => {
           Запам’ятати мене
         </label>
 
+        {/* LOGIN */}
         <button
           onClick={handleLogin}
-          className="
-            mt-4 w-full
-            bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0]
-            text-white py-3 rounded-lg
-            hover:scale-105 transition
-          "
+          className="mt-4 w-full bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] text-white py-3 rounded-lg hover:scale-105 transition"
         >
           Увійти
         </button>
 
-        <div className="flex flex-col gap-3 mt-6">
+        {/* DIVIDER */}
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-[1px] bg-gray-200"></div>
+          <span className="text-gray-400 text-sm">або</span>
+          <div className="flex-1 h-[1px] bg-gray-200"></div>
+        </div>
+
+        {/* 🔥 SOCIAL LOGIN */}
+        <div className="flex flex-col gap-3">
 
           <button
             onClick={() => signIn("google", { callbackUrl: "/profile" })}

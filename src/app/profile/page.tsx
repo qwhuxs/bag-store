@@ -32,7 +32,7 @@ export default async function ProfilePage() {
   if (!user) redirect("/login")
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div>
 
       {/* 👤 PROFILE */}
       <ProfileClient user={user} />
@@ -43,55 +43,78 @@ export default async function ProfilePage() {
       </h2>
 
       {!user.orders.length ? (
-        <p>У вас ще немає замовлень</p>
+        <p className="text-gray-500">
+          У вас ще немає замовлень
+        </p>
       ) : (
         <div className="flex flex-col gap-6">
 
           {user.orders.map((order) => (
-            <div key={order.id} className="border rounded-lg p-4 shadow-sm">
+            <div
+              key={order.id}
+              className="
+                bg-white
+                rounded-2xl
+                shadow-md
+                p-6
+                border border-gray-100
+                hover:shadow-lg
+                transition
+              "
+            >
 
+              {/* HEADER */}
               <div className="flex justify-between mb-4">
                 <div>
-                  <p className="font-semibold">
-  Замовлення #
-  {order.orderNumber
-    ? String(order.orderNumber).padStart(4, "0")
-    : order.id.slice(0, 6)}
-</p>
+                  <p className="font-semibold text-lg">
+                    🧾 Замовлення #
+                    {order.orderNumber
+                      ? String(order.orderNumber).padStart(4, "0")
+                      : order.id.slice(0, 6)}
+                  </p>
 
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-400">
                     {new Date(order.createdAt).toLocaleString()}
                   </p>
                 </div>
 
-                <p className="font-bold">
+                <p className="font-bold text-lg">
                   {order.total} грн
                 </p>
               </div>
 
+          
+
+              {/* ITEMS */}
               {order.items.map((item) => {
                 const alreadyReviewed = user.reviews.some(
                   (r) => r.productId === item.product.id
                 )
 
                 return (
-                  <div key={item.id} className="flex gap-4 mb-3">
+                  <div key={item.id} className="flex gap-4 items-center mt-3">
+
                     <img
                       src={item.product.image}
-                      className="w-16 h-16 rounded"
+                      className="w-16 h-16 rounded-lg object-cover shadow-sm"
                     />
 
                     <div className="flex-1">
-                      <p>{item.product.name}</p>
+                      <p className="font-medium">
+                        {item.product.name}
+                      </p>
 
                       {alreadyReviewed ? (
-                        <p className="text-green-600 text-sm">
+                        <p className="text-green-600 text-sm mt-1">
                           ✔ Відгук вже є
                         </p>
                       ) : (
-                        <ReviewFormInline productId={item.product.id} />
+                        <div className="mt-2">
+                          <ReviewFormInline productId={item.product.id} />
+                        </div>
                       )}
                     </div>
+
                   </div>
                 )
               })}
@@ -101,10 +124,6 @@ export default async function ProfilePage() {
 
         </div>
       )}
-
     </div>
-    
   )
-  
 }
-

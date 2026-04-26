@@ -26,9 +26,7 @@ export default function RootLayout({
           <Toaster
             position="top-center"
             gutter={12}
-            containerStyle={{
-              top: 20,
-            }}
+            containerStyle={{ top: 20 }}
             toastOptions={{
               duration: 3000,
               style: {
@@ -37,18 +35,12 @@ export default function RootLayout({
                 fontSize: "14px",
                 boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
               },
-
               success: {
                 style: {
                   background: "linear-gradient(135deg, #3F5F56, #6e8f86)",
                   color: "#fff",
                 },
-                iconTheme: {
-                  primary: "#fff",
-                  secondary: "#3F5F56",
-                },
               },
-
               error: {
                 style: {
                   background: "linear-gradient(135deg, #ef4444, #f87171)",
@@ -58,15 +50,15 @@ export default function RootLayout({
             }}
           />
 
-          {/* 🔝 Navbar */}
           <Navbar />
 
-          {/* 📄 Контент */}
-          <main className="flex-grow w-full">
-            {children}
+          {/* 🔥 ВАЖЛИВО — НОВИЙ MAIN */}
+          <main className="flex-grow w-full px-4 md:px-6 py-10">
+            <div className="max-w-6xl mx-auto">
+              {children}
+            </div>
           </main>
 
-          {/* 🔽 Footer */}
           <Footer />
 
         </Providers>
