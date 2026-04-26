@@ -4,12 +4,12 @@ import { NextResponse } from "next/server"
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
 
-    const { id } = params
+    const { id } = await context.params
 
     if (!id) {
       return NextResponse.json(
@@ -27,7 +27,6 @@ export async function PUT(
         price: Number(body.price),
         stock: Number(body.stock),
         categoryId: body.categoryId,
-
         discount: Number(body.price) > 3000 ? 10 : null,
       },
     })
