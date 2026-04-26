@@ -83,7 +83,39 @@ export default async function ProfilePage() {
                 </p>
               </div>
 
-          
+          {/* 🛠 ADMIN PANEL */}
+{user.role === "ADMIN" && (
+  <div className="mt-12">
+
+    <h2 className="text-2xl font-bold mb-6">
+      🛠 Адмін-панель
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-6">
+
+      <a
+        href="/admin/products"
+        className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+      >
+        <h3 className="font-semibold text-lg">📦 Товари</h3>
+        <p className="text-sm text-gray-500">
+          Додати / редагувати / видалити
+        </p>
+      </a>
+
+      <a
+        href="/admin/orders"
+        className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+      >
+        <h3 className="font-semibold text-lg">🧾 Замовлення</h3>
+        <p className="text-sm text-gray-500">
+          Підтвердження замовлень
+        </p>
+      </a>
+
+    </div>
+  </div>
+)}
 
               {/* ITEMS */}
               {order.items.map((item) => {
