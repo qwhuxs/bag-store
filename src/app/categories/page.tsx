@@ -1,71 +1,63 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import Image from "next/image" 
+import Image from "next/image"
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: Promise<{ name: string }>
-}) {
-  const { name } = await params
-  const categoryName = decodeURIComponent(name)
+export default async function CategoriesPage() {
+  const categories = await prisma.category.findMany()
 
-  const products = await prisma.product.findMany({
-    where: {
-      category: {
-        name: categoryName,
-      },
-    },
-    include: {
-      category: true,
-    },
-  })
+  const categoryImages: Record<string, string> = {
+    "Рюкзаки": "/images/foto1.jpg",
+    "Сумки через плече": "/images/foto20.jpg",
+    "Клатчі": "/images/foto30.jpg",
+    "Сумки-тоут": "/images/foto40.jpg",
+    "Спортивні сумки": "/images/foto50.jpg",
+    "Сумки на пояс": "/images/foto60.jpg",
+    "Сумки-хобо": "/images/foto70.jpg",
+    "Дорожні сумки": "/images/foto80.jpg",
+    "Еко-сумки": "/images/foto90.jpg",
+    "Сумки ручної роботи": "/images/foto10.jpg",
+  }
 
   return (
-<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-  {products.map((product) => (
-    <div
-      key={product.id}
-      className="group border rounded-xl p-4 bg-white hover:shadow-xl hover:-translate-y-1 transition"
-    >
+      {categories.map((cat) => (
+        <Link
+          key={cat.id}
+          href={`/categories/${encodeURIComponent(cat.name)}`}
+          className="
+            relative h-40 rounded-xl overflow-hidden group
+            shadow-md hover:shadow-xl transition
+          "
+        >
+          {/* 🔥 КАРТИНКА */}
+          <Image
+            src={categoryImages[cat.name] || "/images/fallback.jpg"}
+            alt={cat.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 25vw"
+            className="
+              object-cover
+              group-hover:scale-110 transition duration-500
+            "
+          />
 
-      {/* 📷 Фото */}
-      <div className="relative h-40 w-full bg-gray-100 rounded-lg overflow-hidden">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-contain group-hover:scale-110 transition"
-        />
-      </div>
+          {/* 🔥 ОВЕРЛЕЙ */}
+          <div className="
+            absolute inset-0 bg-black/40
+            flex items-center justify-center
+          ">
+            <span className="
+              text-white text-lg font-semibold
+              group-hover:scale-110 transition
+            ">
+              {cat.name}
+            </span>
+          </div>
 
-      {/* 📦 Назва */}
-      <h3 className="mt-3 font-semibold group-hover:text-[#D9A5A0] transition">
-        {product.name}
-      </h3>
-
-      {/* 💰 Ціна */}
-      <p className="text-[#3F5F56] font-bold">
-        {product.price} грн
-      </p>
-
-      {/* 🔘 КНОПКА */}
-      <Link
-        href={`/product/${product.id}`}
-        className="
-          block mt-3 text-center
-          bg-[#3F5F56] text-white py-2 rounded-lg
-          hover:scale-105 hover:shadow-md transition
-        "
-      >
-        Детальніше
-      </Link>
+        </Link>
+      ))}
 
     </div>
-  ))}
-
-</div>
   )
 }
