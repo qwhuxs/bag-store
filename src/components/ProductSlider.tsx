@@ -2,19 +2,16 @@
 
 import { useRef, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image" 
 
 type Product = {
-  id: string // ✅ ФІКС
+  id: string
   name: string
   price: number
   image: string
 }
 
-export default function ProductSlider({
-  products,
-}: {
-  products: Product[]
-}) {
+export default function ProductSlider({ products }: { products: Product[] }) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: "left" | "right") => {
@@ -48,32 +45,30 @@ export default function ProductSlider({
           behavior: "smooth",
         })
       }
-    }, 3000)
+    }, 5000) 
 
     return () => clearInterval(interval)
   }, [])
 
   return (
     <div className="relative">
-      {/* ⬅️ */}
+
       <button
+        aria-label="Прокрутити вліво"
         onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10
-        bg-white/80 backdrop-blur px-3 py-2 rounded-full shadow hover:scale-110"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur px-3 py-2 rounded-full shadow hover:scale-110"
       >
         ◀
       </button>
 
-      {/* ➡️ */}
       <button
+        aria-label="Прокрутити вправо"
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10
-        bg-white/80 backdrop-blur px-3 py-2 rounded-full shadow hover:scale-110"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur px-3 py-2 rounded-full shadow hover:scale-110"
       >
         ▶
       </button>
 
-      {/* 🛍️ */}
       <div
         ref={scrollRef}
         className="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar py-2"
@@ -82,14 +77,18 @@ export default function ProductSlider({
           <Link
             key={product.id}
             href={`/product/${product.id}`}
-            className="min-w-[220px] max-w-[220px] bg-white rounded-xl shadow-md
-            hover:shadow-xl transition p-3"
+            className="min-w-[220px] max-w-[220px] bg-white rounded-xl shadow-md hover:shadow-xl transition p-3"
           >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-48 object-cover rounded-lg mb-3"
-            />
+
+            <div className="relative w-full h-48 mb-3">
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 50vw, 220px"
+                className="object-cover rounded-lg"
+              />
+            </div>
 
             <h3 className="font-semibold text-sm mb-1 line-clamp-2">
               {product.name}
@@ -98,6 +97,7 @@ export default function ProductSlider({
             <p className="text-lg font-bold">
               {product.price} грн
             </p>
+
           </Link>
         ))}
       </div>
