@@ -66,29 +66,44 @@ export async function POST(req: Request) {
       0
     )
 
-    const order = await prisma.order.create({
-      data: {
-        userId: user.id,
-        total,
+const lastOrder = await prisma.order.findFirst({
+  where: {
+    orderNumber: {
+      not: null,
+    },
+  },
+  orderBy: {
+    orderNumber: "desc",
+  },
+})
 
-        firstName,
-        lastName,
-        phone,
-        city,
+const nextOrderNumber = (lastOrder?.orderNumber ?? 0) + 1
 
-        email: session.user.email,
+const order = await prisma.order.create({
+  data: {
+    userId: user.id,
+    total,
 
-        deliveryType,
-        branch,
+    orderNumber: nextOrderNumber, 
 
-        items: {
-          create: user.cart.items.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-          })),
-        },
-      },
-    })
+    firstName,
+    lastName,
+    phone,
+    city,
+
+    email: session.user.email,
+
+    deliveryType,
+    branch,
+
+    items: {
+      create: user.cart.items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
+    },
+  },
+})
 
     await prisma.cartItem.deleteMany({
       where: { cartId: user.cart.id },

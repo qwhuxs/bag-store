@@ -53,8 +53,11 @@ export default async function ProfilePage() {
               <div className="flex justify-between mb-4">
                 <div>
                   <p className="font-semibold">
-                    Замовлення #{order.id.slice(0, 6)}
-                  </p>
+  Замовлення #
+  {order.orderNumber
+    ? String(order.orderNumber).padStart(4, "0")
+    : order.id.slice(0, 6)}
+</p>
 
                   <p className="text-sm text-gray-500">
                     {new Date(order.createdAt).toLocaleString()}
@@ -100,5 +103,8 @@ export default async function ProfilePage() {
       )}
 
     </div>
+    
   )
+  
 }
+
