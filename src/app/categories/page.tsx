@@ -1,63 +1,71 @@
+import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import Image from "next/image" 
 
-const categories = [
-  { name: "Сумки через плече", description: "Зручні повсякденні сумки через плече", img: "/images/foto20.jpg" },
-  { name: "Клатчі", description: "Невеликі елегантні сумки для вечірок", img: "/images/foto30.jpg" },
-  { name: "Рюкзаки", description: "Стильні міські рюкзаки", img: "/images/foto1.jpg" },
-  { name: "Сумки-тоут", description: "Місткі сумки для покупок або офісу", img: "/images/foto40.jpg" },
-  { name: "Спортивні сумки", description: "Сумки для спорту та фітнесу", img: "/images/foto50.jpg" },
-  { name: "Сумки на пояс", description: "Компактні сумки для пояса", img: "/images/foto60.jpg" },
-  { name: "Сумки-хобо", description: "М'які сумки незвичної форми", img: "/images/foto70.jpg" },
-  { name: "Дорожні сумки", description: "Великі сумки для подорожей", img: "/images/foto80.jpg" },
-  { name: "Еко-сумки", description: "Сумки з натуральних матеріалів", img: "/images/foto85.jpg" },
-  { name: "Сумки ручної роботи", description: "Ексклюзивні вироби ручної роботи", img: "/images/foto93.jpg" },
-]
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ name: string }>
+}) {
+  const { name } = await params
+  const categoryName = decodeURIComponent(name)
 
-export default function CategoriesPage() {
+  const products = await prisma.product.findMany({
+    where: {
+      category: {
+        name: categoryName,
+      },
+    },
+    include: {
+      category: true,
+    },
+  })
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-      {/* 🔥 Заголовок */}
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold">
-          Категорії товарів
-        </h1>
-        <div className="w-24 h-1 bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] mt-3 rounded-full"></div>
+  {products.map((product) => (
+    <div
+      key={product.id}
+      className="group border rounded-xl p-4 bg-white hover:shadow-xl hover:-translate-y-1 transition"
+    >
+
+      {/* 📷 Фото */}
+      <div className="relative h-40 w-full bg-gray-100 rounded-lg overflow-hidden">
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-contain group-hover:scale-110 transition"
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* 📦 Назва */}
+      <h3 className="mt-3 font-semibold group-hover:text-[#D9A5A0] transition">
+        {product.name}
+      </h3>
 
-        {categories.map((cat) => (
-          <Link
-            key={cat.name}
-            href={`/categories/${encodeURIComponent(cat.name)}`}
-            className="group relative h-56 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition"
-          >
+      {/* 💰 Ціна */}
+      <p className="text-[#3F5F56] font-bold">
+        {product.price} грн
+      </p>
 
-            {/* 🖼️ фон */}
-            <img
-              src={cat.img}
-              className="absolute w-full h-full object-cover group-hover:scale-110 transition"
-            />
+      {/* 🔘 КНОПКА */}
+      <Link
+        href={`/product/${product.id}`}
+        className="
+          block mt-3 text-center
+          bg-[#3F5F56] text-white py-2 rounded-lg
+          hover:scale-105 hover:shadow-md transition
+        "
+      >
+        Детальніше
+      </Link>
 
-            {/* 🌫 overlay */}
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
-
-            {/* 📝 текст */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-              <h2 className="text-2xl font-bold">
-                {cat.name}
-              </h2>
-
-              <p className="text-sm opacity-80 mt-1">
-                {cat.description}
-              </p>
-            </div>
-
-          </Link>
-        ))}
-
-      </div>
     </div>
+  ))}
+
+</div>
   )
 }
