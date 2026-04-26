@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import Image from "next/image" 
 
 export default async function NewPage() {
   let products = await prisma.product.findMany({
@@ -24,10 +25,16 @@ export default async function NewPage() {
             "
           >
             <div>
-              <img
-                src={p.image}
-                className="h-40 object-cover mx-auto"
-              />
+              {/* ✅ ЗАМІНЕНО */}
+              <div className="relative h-40 w-full">
+                <Image
+                  src={p.image}
+                  alt={p.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  className="object-cover"
+                />
+              </div>
 
               <p className="mt-2 font-semibold">{p.name}</p>
 
