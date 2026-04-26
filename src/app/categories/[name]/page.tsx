@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import Image from "next/image" 
 
 export default async function CategoryPage({
   params,
@@ -30,10 +31,13 @@ export default async function CategoryPage({
     >
 
       {/* 📷 Фото */}
-      <div className="h-40 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
-        <img
+      <div className="h-40 relative bg-gray-100 rounded-lg overflow-hidden">
+        <Image
           src={product.image}
-          className="h-full object-contain group-hover:scale-110 transition"
+          alt={product.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 25vw"
+          className="object-contain group-hover:scale-110 transition"
         />
       </div>
 
