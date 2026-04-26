@@ -4,13 +4,17 @@ import { useRef, useEffect } from "react"
 import Link from "next/link"
 
 type Product = {
-  id: number
+  id: string // ✅ ФІКС
   name: string
   price: number
   image: string
 }
 
-export default function ProductSlider({ products }: { products: Product[] }) {
+export default function ProductSlider({
+  products,
+}: {
+  products: Product[]
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: "left" | "right") => {
@@ -44,14 +48,13 @@ export default function ProductSlider({ products }: { products: Product[] }) {
           behavior: "smooth",
         })
       }
-    }, 3000) // кожні 3 секунди
+    }, 3000)
 
     return () => clearInterval(interval)
   }, [])
 
   return (
     <div className="relative">
-
       {/* ⬅️ */}
       <button
         onClick={() => scroll("left")}
