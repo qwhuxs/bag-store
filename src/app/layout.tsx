@@ -4,6 +4,27 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { Toaster } from "react-hot-toast"
 
+export const metadata = {
+  title: "Euphoria Bags — стильні сумки, рюкзаки та аксесуари",
+  description:
+    "Інтернет-магазин стильних сумок, рюкзаків та аксесуарів. Хіти продажу, новинки та знижки до -10%.",
+
+  openGraph: {
+    title: "Euphoria Bags",
+    description:
+      "Стильні сумки, рюкзаки та аксесуари онлайн",
+    images: ["/images/foto1.jpg"],
+  },
+
+  keywords: [
+    "сумки",
+    "рюкзаки",
+    "аксесуари",
+    "магазин сумок",
+    "жіночі сумки",
+  ],
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -52,7 +73,6 @@ export default function RootLayout({
 
           <Navbar />
 
-          {/* 🔥 ВАЖЛИВО — НОВИЙ MAIN */}
           <main className="flex-grow w-full px-4 md:px-6 py-10">
             <div className="max-w-6xl mx-auto">
               {children}
