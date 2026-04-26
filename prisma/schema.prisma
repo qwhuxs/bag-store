@@ -16,24 +16,63 @@ model User {
   id       String  @id @default(cuid())
   email    String  @unique
   name     String?
-  age      Int?
   image    String?
   password String?
   role     Role    @default(USER)
 
+  emailVerified DateTime?
+
   accounts Account[]
+  sessions Session[]
   orders   Order[]
   reviews  Review[]
+  cart     Cart?
 }
 
 model Account {
-  id                String @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
 
-  user User @relation(fields: [userId], references: [id])
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int     @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 }
 
 model Product {
@@ -47,6 +86,9 @@ model Product {
   category Category @relation(fields: [categoryId], references: [id])
 
   reviews Review[]
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 }
 
 model Category {
@@ -58,9 +100,21 @@ model Category {
 model Order {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   total     Float
   createdAt DateTime @default(now())
+
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
 
 model Review {

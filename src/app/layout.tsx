@@ -1,5 +1,6 @@
 import Providers from "./providers"
 import "./globals.css"
+import Navbar from "@/components/Navbar"
 
 export default function RootLayout({
   children,
@@ -7,9 +8,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
+    <html lang="uk">
+      <body className="fade-in">
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   )
