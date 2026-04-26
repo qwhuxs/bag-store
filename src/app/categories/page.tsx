@@ -15,7 +15,7 @@ export default async function CategoriesPage() {
     "Сумки-хобо": "/images/foto70.jpg",
     "Дорожні сумки": "/images/foto80.jpg",
     "Еко-сумки": "/images/foto90.jpg",
-    "Сумки ручної роботи": "/images/foto10.jpg",
+    "Сумки ручної роботи": "/images/foto97.jpg",
   }
 
   return (
