@@ -66,44 +66,69 @@ export async function POST(req: Request) {
       0
     )
 
-const lastOrder = await prisma.order.findFirst({
-  where: {
-    orderNumber: {
-      not: null,
-    },
-  },
-  orderBy: {
-    orderNumber: "desc",
-  },
-})
+    const lastOrder = await prisma.order.findFirst({
+      where: {
+        orderNumber: {
+          not: null,
+        },
+      },
+      orderBy: {
+        orderNumber: "desc",
+      },
+    })
 
-const nextOrderNumber = (lastOrder?.orderNumber ?? 0) + 1
+    const nextOrderNumber = (lastOrder?.orderNumber ?? 0) + 1
 
-const order = await prisma.order.create({
-  data: {
-    userId: user.id,
-    total,
+    for (const item of user.cart.items) {
+      if (item.quantity > item.product.stock) {
+        return Response.json(
+          {
+            error: `Недостатньо товару: ${item.product.name}`,
+          },
+          { status: 400 }
+        )
+      }
+    }
 
-    orderNumber: nextOrderNumber, 
+    const order = await prisma.order.create({
+      data: {
+        userId: user.id,
+        total,
+        orderNumber: nextOrderNumber,
 
-    firstName,
-    lastName,
-    phone,
-    city,
+        firstName,
+        lastName,
+        phone,
+        city,
 
-    email: session.user.email,
+        email: session.user.email,
 
-    deliveryType,
-    branch,
+        deliveryType,
+        branch,
 
-    items: {
-      create: user.cart.items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-      })),
-    },
-  },
-})
+        items: {
+          create: user.cart.items.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          })),
+        },
+      },
+    })
+
+    for (const item of user.cart.items) {
+      await prisma.product.update({
+        where: { id: item.productId },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+
+          sales: {
+            increment: item.quantity,
+          },
+        },
+      })
+    }
 
     await prisma.cartItem.deleteMany({
       where: { cartId: user.cart.id },
@@ -112,7 +137,7 @@ const order = await prisma.order.create({
     return Response.json(order)
 
   } catch (error) {
-    console.error(error)
+    console.error("ORDER ERROR:", error)
 
     return Response.json(
       { error: "Помилка сервера" },
