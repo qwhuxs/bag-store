@@ -1,0 +1,59 @@
+import { prisma } from "@/lib/prisma"
+import Link from "next/link"
+
+export default async function HitsPage() {
+  let products = await prisma.product.findMany({
+    take: 20,
+  })
+
+  products = products.sort(() => 0.5 - Math.random()).slice(0, 8)
+
+  return (
+    <div className="max-w-6xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">🔥 Хіти продажу</h1>
+
+      <div className="grid grid-cols-4 gap-6">
+        {products.map((p) => (
+          <div
+            key={p.id}
+            className="
+              border p-4 rounded-xl
+              hover:shadow-lg transition
+              flex flex-col justify-between
+            "
+          >
+            <div>
+              <img
+                src={p.image}
+                className="h-40 object-cover mx-auto"
+              />
+
+              <p className="mt-2 font-semibold">{p.name}</p>
+
+              <p className="text-[#D9A5A0] font-bold">
+                {p.price} грн
+              </p>
+
+              <p className="text-xs text-gray-400">
+                Продано: {p.sales}
+              </p>
+            </div>
+
+            {/* 🔥 КНОПКА */}
+            <Link
+              href={`/product/${p.id}`}
+              className="
+                mt-4 text-center
+                bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0]
+                text-white py-2 rounded-lg
+                hover:scale-105 transition
+              "
+            >
+              Детальніше
+            </Link>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
