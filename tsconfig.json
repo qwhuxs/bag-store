@@ -13,13 +13,14 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "types": ["jest", "node"],
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-  "@/*": ["./src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -28,7 +29,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "prisma/seed.js", "scripts/fixDiscounts.js"  ],
+    "**/*.mts",
+    "prisma/seed.js",
+    "scripts/fixDiscounts.js"
+  ],
   "exclude": ["node_modules"]
 }
