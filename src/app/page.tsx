@@ -9,6 +9,13 @@ export default async function HomePage() {
 
   const shuffled = products.sort(() => 0.5 - Math.random())
 
+  const sliderProducts = shuffled.map((p) => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    image: p.image,
+  }))
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
 
@@ -37,6 +44,47 @@ export default async function HomePage() {
         </Link>
       </div>
 
+      {/* 💰 SALE БАНЕР */}
+      <div className="
+        mb-16 relative overflow-hidden
+        rounded-2xl shadow-xl
+        bg-gradient-to-r from-red-500 via-pink-500 to-orange-400
+        p-10 text-white
+      ">
+        <div className="relative z-10 max-w-xl">
+          <h2 className="text-4xl font-extrabold mb-3">
+            🔥 SALE до -10%
+          </h2>
+
+          <p className="mb-5 text-lg opacity-90">
+            Знижки на популярні моделі вже тут. Не пропусти!
+          </p>
+
+          <Link
+            href="/sale"
+            className="
+              inline-block
+              bg-white text-black px-6 py-3 rounded-lg
+              font-semibold hover:scale-105 transition
+            "
+          >
+            Дивитись знижки
+          </Link>
+        </div>
+
+        <div className="
+          absolute -right-20 -top-20
+          w-72 h-72 bg-white/10 rounded-full blur-3xl
+        " />
+
+        <div className="
+          absolute right-10 bottom-0
+          text-8xl font-black opacity-10
+        ">
+          SALE
+        </div>
+      </div>
+
       {/* 🛍️ РЕКОМЕНДОВАНІ */}
       <div className="flex justify-center mb-10">
         <div className="p-[2px] bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] rounded-xl">
@@ -48,7 +96,8 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <ProductSlider products={shuffled} />
+      {/* ✅ ТУТ ФІКС */}
+      <ProductSlider products={sliderProducts} />
 
       {/* 🎯 КАТЕГОРІЇ */}
       <div className="flex justify-center mt-16 mb-10">
@@ -63,7 +112,6 @@ export default async function HomePage() {
 
       <div className="overflow-x-auto pb-4">
         <div className="flex gap-6 w-max">
-
           {[
             { name: "Рюкзаки", img: "/images/foto1.jpg" },
             { name: "Сумки через плече", img: "/images/foto20.jpg" },
@@ -101,7 +149,6 @@ export default async function HomePage() {
               </div>
             </Link>
           ))}
-
         </div>
       </div>
 
