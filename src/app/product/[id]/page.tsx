@@ -27,6 +27,18 @@ export default async function ProductPage({
 
   if (!product) return notFound()
 
+  const avgRating =
+    product.reviews.length > 0
+      ? (
+          product.reviews.reduce((sum, r) => sum + r.rating, 0) /
+          product.reviews.length
+        ).toFixed(1)
+      : null
+
+  const discountedPrice = product.discount
+    ? Math.round(product.price * (1 - product.discount / 100))
+    : null
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
 
@@ -42,6 +54,13 @@ export default async function ProductPage({
           flex items-center justify-center
           overflow-hidden group
         ">
+          {/* 🔥 DISCOUNT BADGE */}
+          {product.discount && (
+            <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
+              -{product.discount}%
+            </div>
+          )}
+
           <div className="
             absolute inset-0
             bg-gradient-to-tr from-[#D9A5A0]/20 to-[#3F5F56]/20
@@ -64,13 +83,35 @@ export default async function ProductPage({
         {/* 📦 ІНФО */}
         <div className="bg-white p-6 rounded-2xl shadow-lg">
 
-          <h1 className="text-3xl font-bold mb-3">
+          <h1 className="text-3xl font-bold mb-2">
             {product.name}
           </h1>
 
-          <p className="text-[#D9A5A0] text-2xl font-semibold mb-4">
-            {product.price} грн
-          </p>
+          {/* ⭐ РЕЙТИНГ */}
+          {avgRating && (
+            <p className="text-yellow-500 mb-2">
+              ⭐ {avgRating} / 5
+            </p>
+          )}
+
+          {/* 💰 ЦІНИ */}
+          <div className="mb-4">
+            {product.discount ? (
+              <div className="flex items-center gap-3">
+                <span className="text-2xl text-red-500 font-bold">
+                  {discountedPrice} грн
+                </span>
+
+                <span className="text-gray-400 line-through">
+                  {product.price} грн
+                </span>
+              </div>
+            ) : (
+              <p className="text-[#D9A5A0] text-2xl font-semibold">
+                {product.price} грн
+              </p>
+            )}
+          </div>
 
           <p className="text-gray-600 mb-4">
             {product.description}
@@ -80,19 +121,19 @@ export default async function ProductPage({
             Категорія: {product.category.name}
           </p>
 
-          {/* статус */}
+          {/* 📦 СТАТУС */}
           <div className="mb-4">
             {product.stock === 0 ? (
               <p className="text-red-500 font-semibold">
-                Немає в наявності
+                ❌ Немає в наявності
               </p>
             ) : product.stock <= 5 ? (
               <p className="text-yellow-600 font-semibold">
-                Залишилось {product.stock} шт
+                ⚠️ Залишилось {product.stock} шт
               </p>
             ) : (
               <p className="text-green-600 font-medium">
-                В наявності
+                ✅ В наявності
               </p>
             )}
           </div>
@@ -139,10 +180,8 @@ export default async function ProductPage({
           </div>
         )}
 
-        {/* ✍️ форма */}
         <ReviewForm productId={product.id} />
       </div>
-
     </div>
   )
 }
