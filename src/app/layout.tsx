@@ -5,14 +5,36 @@ import Footer from "@/components/Footer"
 import { Toaster } from "react-hot-toast"
 
 export const metadata = {
+  metadataBase: new URL(
+    process.env.NEXTAUTH_URL || "http://localhost:3000"
+  ),
+
   title: "Euphoria Bags — стильні сумки, рюкзаки та аксесуари",
+
   description:
     "Інтернет-магазин стильних сумок, рюкзаків та аксесуарів. Хіти продажу, новинки та знижки до -10%.",
 
   openGraph: {
     title: "Euphoria Bags",
-    description:
-      "Стильні сумки, рюкзаки та аксесуари онлайн",
+    description: "Стильні сумки, рюкзаки та аксесуари онлайн",
+    url: "/",
+    siteName: "Euphoria Bags",
+    images: [
+      {
+        url: "/images/foto1.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Euphoria Bags",
+      },
+    ],
+    locale: "uk_UA",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Euphoria Bags",
+    description: "Стильні сумки онлайн",
     images: ["/images/foto1.jpg"],
   },
 
@@ -23,6 +45,10 @@ export const metadata = {
     "магазин сумок",
     "жіночі сумки",
   ],
+
+  icons: {
+    icon: "/favicon.ico",
+  },
 }
 
 export default function RootLayout({
