@@ -3,11 +3,11 @@ import { requireAdmin } from "@/lib/isAdmin"
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   await requireAdmin()
 
-  const { id } = params
+  const id = context.params.id
 
   await prisma.category.delete({
     where: { id },
