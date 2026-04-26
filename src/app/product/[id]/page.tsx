@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import AddToCartButton from "@/components/AddToCartButton"
+import ReviewForm from "@/components/ReviewForm"
 
 export default async function ProductPage({
   params,
@@ -11,27 +12,58 @@ export default async function ProductPage({
 
   const product = await prisma.product.findUnique({
     where: { id },
-    include: { category: true },
+    include: {
+      category: true,
+      reviews: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          id: "desc",
+        },
+      },
+    },
   })
 
   if (!product) return notFound()
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
 
-      <div className="grid md:grid-cols-2 gap-8">
+      {/* 🔝 ПРОДУКТ */}
+      <div className="grid md:grid-cols-2 gap-10 items-start">
 
         {/* 🖼️ КАРТИНКА */}
-<div className="h-[500px] w-full overflow-hidden rounded-xl bg-gray-100 flex items-center justify-center">
-  <img
-    src={product.image}
-    alt={product.name}
-    className="h-full w-full object-contain transition hover:scale-105"
-  />
-</div>
+        <div className="
+          relative h-[500px] w-full
+          rounded-2xl
+          bg-gradient-to-br from-gray-50 to-gray-200
+          shadow-xl
+          flex items-center justify-center
+          overflow-hidden group
+        ">
+          <div className="
+            absolute inset-0
+            bg-gradient-to-tr from-[#D9A5A0]/20 to-[#3F5F56]/20
+            opacity-0 group-hover:opacity-100
+            transition duration-500
+          " />
+
+          <img
+            src={product.image}
+            alt={product.name}
+            className="
+              h-[85%]
+              object-contain
+              transition duration-500
+              group-hover:scale-110
+            "
+          />
+        </div>
 
         {/* 📦 ІНФО */}
-        <div>
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
+
           <h1 className="text-3xl font-bold mb-3">
             {product.name}
           </h1>
@@ -44,13 +76,73 @@ export default async function ProductPage({
             {product.description}
           </p>
 
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="text-sm text-gray-500 mb-4">
             Категорія: {product.category.name}
           </p>
 
-          <AddToCartButton productId={product.id} />
+          {/* статус */}
+          <div className="mb-4">
+            {product.stock === 0 ? (
+              <p className="text-red-500 font-semibold">
+                Немає в наявності
+              </p>
+            ) : product.stock <= 5 ? (
+              <p className="text-yellow-600 font-semibold">
+                Залишилось {product.stock} шт
+              </p>
+            ) : (
+              <p className="text-green-600 font-medium">
+                В наявності
+              </p>
+            )}
+          </div>
+
+          <AddToCartButton
+            productId={product.id}
+            disabled={product.stock === 0}
+          />
         </div>
       </div>
+
+      {/* ⭐ ВІДГУКИ */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-6">
+          Відгуки
+        </h2>
+
+        {product.reviews.length === 0 ? (
+          <p className="text-gray-500">
+            Поки що немає відгуків
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {product.reviews.map((review) => (
+              <div
+                key={review.id}
+                className="bg-white p-4 rounded-xl shadow"
+              >
+                <div className="flex justify-between mb-2">
+                  <span className="font-medium">
+                    {review.user?.name || "Користувач"}
+                  </span>
+
+                  <span className="text-yellow-500">
+                    {"⭐".repeat(review.rating)}
+                  </span>
+                </div>
+
+                <p className="text-gray-700 text-sm">
+                  {review.comment}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ✍️ форма */}
+        <ReviewForm productId={product.id} />
+      </div>
+
     </div>
   )
 }

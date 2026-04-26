@@ -1,70 +1,60 @@
 import Link from "next/link"
 
 const categories = [
-  { name: "Сумки через плече", description: "Зручні повсякденні сумки через плече" },
-  { name: "Клатчі", description: "Невеликі елегантні сумки для вечірок" },
-  { name: "Рюкзаки", description: "Стильні міські рюкзаки" },
-  { name: "Сумки-тоут", description: "Місткі сумки для покупок або офісу" },
-  { name: "Спортивні сумки", description: "Сумки для спорту та фітнесу" },
-  { name: "Сумки на пояс", description: "Компактні сумки для пояса" },
-  { name: "Сумки-хобо", description: "М'які сумки незвичної форми" },
-  { name: "Дорожні сумки", description: "Великі сумки для подорожей" },
-  { name: "Еко-сумки", description: "Сумки з натуральних матеріалів" },
-  { name: "Сумки ручної роботи", description: "Ексклюзивні вироби ручної роботи" },
+  { name: "Сумки через плече", description: "Зручні повсякденні сумки через плече", img: "/images/foto20.jpg" },
+  { name: "Клатчі", description: "Невеликі елегантні сумки для вечірок", img: "/images/foto30.jpg" },
+  { name: "Рюкзаки", description: "Стильні міські рюкзаки", img: "/images/foto1.jpg" },
+  { name: "Сумки-тоут", description: "Місткі сумки для покупок або офісу", img: "/images/foto40.jpg" },
+  { name: "Спортивні сумки", description: "Сумки для спорту та фітнесу", img: "/images/foto50.jpg" },
+  { name: "Сумки на пояс", description: "Компактні сумки для пояса", img: "/images/foto60.jpg" },
+  { name: "Сумки-хобо", description: "М'які сумки незвичної форми", img: "/images/foto70.jpg" },
+  { name: "Дорожні сумки", description: "Великі сумки для подорожей", img: "/images/foto80.jpg" },
+  { name: "Еко-сумки", description: "Сумки з натуральних матеріалів", img: "/images/foto85.jpg" },
+  { name: "Сумки ручної роботи", description: "Ексклюзивні вироби ручної роботи", img: "/images/foto93.jpg" },
 ]
 
 export default function CategoriesPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
 
-      <h1 className="text-3xl font-bold mb-8">
-        Категорії товарів
-      </h1>
+      {/* 🔥 Заголовок */}
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold">
+          Категорії товарів
+        </h1>
+        <div className="w-24 h-1 bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] mt-3 rounded-full"></div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
         {categories.map((cat) => (
-          <div
+          <Link
             key={cat.name}
-            className="
-              group relative bg-white rounded-2xl p-6 border border-gray-200
-              shadow-sm hover:shadow-xl hover:-translate-y-2 transition duration-300 overflow-hidden
-            "
+            href={`/categories/${encodeURIComponent(cat.name)}`}
+            className="group relative h-56 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition"
           >
 
-            {/* FIX: overlay не блокує кліки */}
-            <div className="
-              pointer-events-none
-              absolute inset-0
-              bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0]
-              opacity-0 group-hover:opacity-10 transition
-            " />
+            {/* 🖼️ фон */}
+            <img
+              src={cat.img}
+              className="absolute w-full h-full object-cover group-hover:scale-110 transition"
+            />
 
-            <h2 className="
-              text-xl font-semibold text-[#3F5F56]
-              group-hover:text-[#D9A5A0] transition relative z-10
-            ">
-              {cat.name}
-            </h2>
+            {/* 🌫 overlay */}
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
 
-            <p className="text-gray-600 mt-2 text-sm relative z-10">
-              {cat.description}
-            </p>
+            {/* 📝 текст */}
+            <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+              <h2 className="text-2xl font-bold">
+                {cat.name}
+              </h2>
 
-            <Link
-              href={`/catalog?category=${encodeURIComponent(cat.name)}`}
-              className="
-                relative z-10
-                inline-block mt-5
-                bg-gradient-to-r from-[#D9A5A0] to-[#B97E7B]
-                text-white px-5 py-2 rounded-lg text-sm
-                shadow-sm hover:scale-105 hover:shadow-md transition
-              "
-            >
-              Переглянути товари
-            </Link>
+              <p className="text-sm opacity-80 mt-1">
+                {cat.description}
+              </p>
+            </div>
 
-          </div>
+          </Link>
         ))}
 
       </div>

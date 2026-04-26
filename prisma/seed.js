@@ -40,17 +40,19 @@ async function main() {
   for (const category of categories) {
     const imgs = categoryImages[category.name]
 
-for (let i = 0; i < 12; i++) {
-  await prisma.product.create({
-    data: {
-      name: `${adjectives[Math.floor(Math.random() * adjectives.length)]} ${category.name}`,
-      description: "Якісна стильна сумка",
-      price: 800 + Math.floor(Math.random() * 4000),
-      image: imgs[i % imgs.length], 
-      categoryId: category.id,
-    },
-  })
-}
+    for (let i = 0; i < 12; i++) {
+      await prisma.product.create({
+        data: {
+          name: `${adjectives[Math.floor(Math.random() * adjectives.length)]} ${category.name}`,
+          description: "Якісна стильна сумка",
+          price: 800 + Math.floor(Math.random() * 4000),
+          image: imgs[i % imgs.length],
+          categoryId: category.id,
+
+          stock: Math.floor(Math.random() * 10), // 0–9
+        },
+      })
+    }
   }
 
   console.log("🔥 Seed виконано")

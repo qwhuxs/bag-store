@@ -20,6 +20,12 @@ model User {
   password String?
   role     Role    @default(USER)
 
+  firstName String?
+  lastName  String?
+  age       Int?
+  city      String?
+  phone     String?
+
   emailVerified DateTime?
 
   accounts Account[]
@@ -73,6 +79,8 @@ model CartItem {
 
   cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
 }
 
 model Product {
@@ -82,6 +90,8 @@ model Product {
   price       Float
   image       String
   categoryId  String
+
+  stock Int @default(10)
 
   category Category @relation(fields: [categoryId], references: [id])
 
@@ -103,6 +113,18 @@ model Order {
   total     Float
   createdAt DateTime @default(now())
 
+  firstName String
+  lastName  String
+  phone     String
+  city      String
+
+  email String   
+
+  deliveryType String
+  branch       String
+
+  status String @default("pending") 
+
   user  User        @relation(fields: [userId], references: [id])
   items OrderItem[]
 }
@@ -113,7 +135,7 @@ model OrderItem {
   productId String
   quantity  Int
 
-  order   Order   @relation(fields: [orderId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
 }
 

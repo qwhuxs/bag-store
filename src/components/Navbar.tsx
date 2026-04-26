@@ -33,13 +33,9 @@ export default function Navbar() {
             Категорії
           </Link>
 
-          {/* 🔐 Якщо НЕ залогінений */}
           {!session ? (
             <>
-              <Link
-                href="/login"
-                className="hover:text-[#D9A5A0] transition"
-              >
+              <Link href="/login" className="hover:text-[#D9A5A0] transition">
                 Увійти
               </Link>
 
@@ -52,28 +48,18 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              {/* 🛒 КОШИК */}
-              <Link
-                href="/cart"
-                className="hover:text-[#D9A5A0] transition"
-              >
+              <Link href="/cart" className="hover:text-[#D9A5A0] transition">
                 🛒 Кошик
               </Link>
 
-              {/* 👤 ПРОФІЛЬ */}
-              <Link
-                href="/profile"
-                className="hover:text-[#D9A5A0] transition"
-              >
-                Профіль
-              </Link>
+              <Link href="/profile" className="hover:text-[#D9A5A0] transition">
+  👤 Профіль
+</Link>
 
-              {/* 📧 EMAIL */}
               <span className="text-gray-600 text-xs">
                 {session.user?.email}
               </span>
 
-              {/* 🚪 ВИЙТИ */}
               <button
                 onClick={() => signOut()}
                 className="text-red-500 hover:underline"

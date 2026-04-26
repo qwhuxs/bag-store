@@ -1,53 +1,89 @@
 "use client"
 
 import { useState } from "react"
+import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 export default function RegisterPage() {
   const router = useRouter()
 
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [age, setAge] = useState("")
+  const [city, setCity] = useState("")
+  const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
+  const [loading, setLoading] = useState(false)
+
   const handleRegister = async () => {
+    setLoading(true)
+
     const res = await fetch("/api/register", {
       method: "POST",
-      body: JSON.stringify({ email, password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        age: age ? Number(age) : null,
+        city,
+        phone,
+        email,
+        password,
+      }),
     })
 
-    if (res.ok) {
-      router.push("/login")
-    } else {
-      alert("Помилка реєстрації")
+    const data = await res.json()
+
+    if (!res.ok) {
+      toast.error(data.error || "Помилка реєстрації")
+      setLoading(false)
+      return
     }
+
+    toast.success("Реєстрація успішна 🎉")
+
+    const login = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (login?.error) {
+      toast.error("Помилка входу")
+      router.push("/login")
+      return
+    }
+
+    window.location.href = "/profile"
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="bg-white p-8 rounded-xl shadow-md w-[350px] flex flex-col gap-4">
+    <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
 
-        <h1 className="text-xl font-bold text-center">
+        <h1 className="text-3xl font-bold text-center mb-6">
           Реєстрація
         </h1>
 
-        <input
-          placeholder="Email"
-          className="border p-2 rounded"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Пароль"
-          className="border p-2 rounded"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <input placeholder="Ім’я" className="input" onChange={(e)=>setFirstName(e.target.value)} />
+        <input placeholder="Прізвище" className="input mt-3" onChange={(e)=>setLastName(e.target.value)} />
+        <input placeholder="Вік" className="input mt-3" onChange={(e)=>setAge(e.target.value)} />
+        <input placeholder="Місто" className="input mt-3" onChange={(e)=>setCity(e.target.value)} />
+        <input placeholder="Телефон" className="input mt-3" onChange={(e)=>setPhone(e.target.value)} />
+        <input placeholder="Email" className="input mt-3" onChange={(e)=>setEmail(e.target.value)} />
+        <input type="password" placeholder="Пароль" className="input mt-3" onChange={(e)=>setPassword(e.target.value)} />
 
         <button
           onClick={handleRegister}
-          className="bg-purple-600 text-white py-2 rounded"
+          disabled={loading}
+          className="mt-4 w-full bg-[#3F5F56] text-white py-3 rounded-lg"
         >
-          Зареєструватися
+          {loading ? "Завантаження..." : "Зареєструватися"}
         </button>
 
       </div>

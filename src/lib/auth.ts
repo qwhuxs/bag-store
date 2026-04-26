@@ -11,23 +11,23 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
 
   providers: [
-GitHubProvider({
-  clientId: process.env.GITHUB_ID!,
-  clientSecret: process.env.GITHUB_SECRET!,
-  allowDangerousEmailAccountLinking: true,
-}),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
 
-GoogleProvider({
-  clientId: process.env.GOOGLE_ID!,
-  clientSecret: process.env.GOOGLE_SECRET!,
-  allowDangerousEmailAccountLinking: true, 
-}),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID!,
+      clientSecret: process.env.GOOGLE_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
 
-DiscordProvider({
-  clientId: process.env.DISCORD_CLIENT_ID!,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-  allowDangerousEmailAccountLinking: true,
-}),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
 
     CredentialsProvider({
       name: "Credentials",
@@ -57,17 +57,11 @@ DiscordProvider({
   ],
 
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
 
   pages: {
     signIn: "/login",
-  },
-
-  callbacks: {
-    async redirect({ url, baseUrl }) {
-      return baseUrl + "/profile"
-    },
   },
 }
 

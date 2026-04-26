@@ -1,6 +1,8 @@
 import Providers from "./providers"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import { Toaster } from "react-hot-toast"
 
 export default function RootLayout({
   children,
@@ -9,11 +11,66 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uk">
-      <body className="fade-in">
+      <body
+        className="
+          fade-in
+          flex flex-col min-h-screen
+          bg-gradient-to-br from-[#f5f3f2] to-[#e9e4e1]
+          text-gray-800
+        "
+      >
+
         <Providers>
+
+          {/* 🔔 TOAST */}
+          <Toaster
+            position="top-center"
+            gutter={12}
+            containerStyle={{
+              top: 20,
+            }}
+            toastOptions={{
+              duration: 3000,
+              style: {
+                borderRadius: "14px",
+                padding: "14px 18px",
+                fontSize: "14px",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+              },
+
+              success: {
+                style: {
+                  background: "linear-gradient(135deg, #3F5F56, #6e8f86)",
+                  color: "#fff",
+                },
+                iconTheme: {
+                  primary: "#fff",
+                  secondary: "#3F5F56",
+                },
+              },
+
+              error: {
+                style: {
+                  background: "linear-gradient(135deg, #ef4444, #f87171)",
+                  color: "#fff",
+                },
+              },
+            }}
+          />
+
+          {/* 🔝 Navbar */}
           <Navbar />
-          {children}
+
+          {/* 📄 Контент */}
+          <main className="flex-grow w-full">
+            {children}
+          </main>
+
+          {/* 🔽 Footer */}
+          <Footer />
+
         </Providers>
+
       </body>
     </html>
   )

@@ -14,3 +14,54 @@ body {
 a {
   text-decoration: none;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #3F5F56;
+}
+
+.social-btn {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.social-btn:hover {
+  background: #f9fafb;
+}
+
+.social-btn-discord {
+  background: #5865F2;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #3F5F56;
+  box-shadow: 0 0 0 2px rgba(63, 95, 86, 0.2);
+}
