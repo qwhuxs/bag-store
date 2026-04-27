@@ -28,28 +28,28 @@ export default async function SalePage() {
             >
               <div>
 
-                {/* 🔥 IMAGE + БЕЙДЖ */}
-                <div className="relative">
+                {/* ✅ ВИПРАВЛЕНИЙ IMAGE + БЕЙДЖ */}
+                <div className="relative h-40 w-full">
 
-                  {/* 🔥 БЕЙДЖ */}
-                  <span className="
-                    absolute top-2 left-2
-                    bg-red-500 text-white text-xs
-                    px-2 py-1 rounded-lg shadow
-                  ">
-                    -{p.discount}%
-                  </span>
+                  {/* IMAGE */}
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    className="object-cover rounded-lg"
+                  />
 
-                  {/* ✅ ЗАМІНЕНО */}
-                  <div className="relative h-40 w-full">
-                    <Image
-                      src={p.image}
-                      alt={p.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover"
-                    />
-                  </div>
+                  {/* BADGE */}
+                  {p.discount && (
+                    <span className="
+                      absolute top-2 left-2 z-20
+                      bg-red-500 text-white text-xs
+                      px-2 py-1 rounded-lg shadow
+                    ">
+                      -{p.discount}%
+                    </span>
+                  )}
 
                 </div>
 
