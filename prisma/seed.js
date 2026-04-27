@@ -5,39 +5,40 @@ const prisma = new PrismaClient()
 
 const categoryImages = {
   "Рюкзаки": Array.from({ length: 14 }, (_, i) => `/images/foto${i + 1}.jpg`),
-
   "Сумки через плече": Array.from({ length: 14 }, (_, i) => `/images/foto${i + 15}.jpg`),
-
   "Клатчі": Array.from({ length: 11 }, (_, i) => `/images/foto${i + 29}.jpg`),
-
   "Сумки-тоут": Array.from({ length: 10 }, (_, i) => `/images/foto${i + 40}.jpg`),
-
   "Спортивні сумки": Array.from({ length: 9 }, (_, i) => `/images/foto${i + 50}.jpg`),
-
   "Сумки на пояс": Array.from({ length: 10 }, (_, i) => `/images/foto${i + 59}.jpg`),
-
   "Сумки-хобо": Array.from({ length: 8 }, (_, i) => `/images/foto${i + 69}.jpg`),
-
   "Дорожні сумки": Array.from({ length: 8 }, (_, i) => `/images/foto${i + 77}.jpg`),
-
   "Еко-сумки": Array.from({ length: 8 }, (_, i) => `/images/foto${i + 85}.jpg`),
-
   "Сумки ручної роботи": Array.from({ length: 7 }, (_, i) => `/images/foto${i + 93}.jpg`),
 }
 
 const adjectives = ["Стильна", "Модна", "Елегантна", "Преміум", "Класична"]
 
 async function main() {
-  await prisma.product.deleteMany()
-  await prisma.category.deleteMany()
 
-  await prisma.category.createMany({
-    data: Object.keys(categoryImages).map((name) => ({ name })),
-  })
+  console.log("🌱 Безпечний seed...")
+
+  for (const name of Object.keys(categoryImages)) {
+    await prisma.category.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    })
+  }
 
   const categories = await prisma.category.findMany()
 
   for (const category of categories) {
+    const existingCount = await prisma.product.count({
+      where: { categoryId: category.id },
+    })
+
+    if (existingCount > 0) continue
+
     const imgs = categoryImages[category.name]
 
     for (let i = 0; i < 12; i++) {
@@ -48,14 +49,13 @@ async function main() {
           price: 800 + Math.floor(Math.random() * 4000),
           image: imgs[i % imgs.length],
           categoryId: category.id,
-
-          stock: Math.floor(Math.random() * 10), // 0–9
+          stock: Math.floor(Math.random() * 10),
         },
       })
     }
   }
 
-  console.log("🔥 Seed виконано")
+  console.log("✅ Seed безпечний — дані НЕ видалені")
 }
 
 main()
