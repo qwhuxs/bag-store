@@ -50,6 +50,8 @@ async function main() {
           image: imgs[i % imgs.length],
           categoryId: category.id,
           stock: Math.floor(Math.random() * 10),
+
+          discount: Math.random() > 0.6 ? 10 : null,
         },
       })
     }
