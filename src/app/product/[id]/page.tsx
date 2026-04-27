@@ -36,8 +36,10 @@ export default async function ProductPage({
         ).toFixed(1)
       : null
 
-  const discountedPrice = product.discount
-    ? Math.round(product.price * (1 - product.discount / 100))
+  const hasDiscount = product.discount !== null && product.discount > 0
+
+  const discountedPrice = hasDiscount
+    ? Math.round(product.price * (1 - product.discount! / 100))
     : null
 
   return (
@@ -55,9 +57,10 @@ export default async function ProductPage({
           flex items-center justify-center
           overflow-hidden group
         ">
-          {/* 🔥 DISCOUNT BADGE */}
-          {product.discount && (
-            <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
+
+          {/* ✅ ВИПРАВЛЕНИЙ БЕЙДЖ */}
+          {hasDiscount && (
+            <div className="absolute top-4 left-4 z-20 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
               -{product.discount}%
             </div>
           )}
@@ -69,13 +72,12 @@ export default async function ProductPage({
             transition duration-500
           " />
 
-          {/* ✅ ОНОВЛЕНО */}
           <Image
             src={product.image}
             alt={product.name}
             fill
             priority
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="
               h-[85%]
               object-contain
@@ -101,7 +103,7 @@ export default async function ProductPage({
 
           {/* 💰 ЦІНИ */}
           <div className="mb-4">
-            {product.discount ? (
+            {hasDiscount ? (
               <div className="flex items-center gap-3">
                 <span className="text-2xl text-red-500 font-bold">
                   {discountedPrice} грн
