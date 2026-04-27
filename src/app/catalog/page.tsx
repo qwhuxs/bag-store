@@ -83,9 +83,10 @@ export default async function CatalogPage({
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
 
         {products.map((p) => {
-          const hasDiscount = !!p.discount
+          const hasDiscount = p.discount !== null && p.discount > 0
+
           const newPrice = hasDiscount
-            ? (p.price * (1 - p.discount! / 100)).toFixed(0)
+            ? Math.round(p.price * (1 - p.discount! / 100))
             : null
 
           return (
@@ -94,15 +95,9 @@ export default async function CatalogPage({
               className="bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition overflow-hidden border border-gray-100"
             >
 
-              <div className="relative h-64 w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+              {/* 🔥 IMAGE + BADGE */}
+              <div className="relative h-64 w-full bg-gray-100 overflow-hidden">
 
-                {hasDiscount && (
-                  <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg shadow">
-                    -{p.discount}%
-                  </span>
-                )}
-
-                {/* ✅ ФІКС ТУТ */}
                 <Image
                   src={p.image}
                   alt={p.name}
@@ -110,6 +105,17 @@ export default async function CatalogPage({
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   className="object-contain transition hover:scale-105"
                 />
+
+                {hasDiscount && (
+                  <span className="
+                    absolute top-2 left-2 z-20
+                    bg-red-500 text-white text-xs
+                    px-2 py-1 rounded-lg shadow
+                  ">
+                    -{p.discount}%
+                  </span>
+                )}
+
               </div>
 
               <div className="p-4 flex flex-col gap-2">
