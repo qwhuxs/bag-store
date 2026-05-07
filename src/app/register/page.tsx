@@ -18,50 +18,54 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     setLoading(true)
 
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        age: age ? Number(age) : null,
-        city,
-        phone,
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          age: age ? Number(age) : null,
+          city,
+          phone,
+          email,
+          password,
+        }),
+      })
+
+      const data = await res.json()
+
+      // ❌ помилка реєстрації
+      if (!res.ok) {
+        toast.error(data.error || "Помилка реєстрації")
+        setLoading(false)
+        return
+      }
+
+      toast.success("Реєстрація успішна 🎉")
+
+      // ✅ логін після реєстрації
+      const login = await signIn("credentials", {
         email,
         password,
-      }),
-    })
+        redirect: false,
+      })
 
-    const login = await signIn("credentials", {
-  email,
-  password,
-  redirect: false,
-})
+      if (login?.error) {
+        toast.error("Помилка входу")
+        setLoading(false)
+        return
+      }
 
-if (login?.error) {
-  toast.error("Помилка входу")
-  return
-}
+      window.location.href = "/profile"
 
-window.location.href = "/profile"
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      toast.error(data.error || "Помилка реєстрації")
-      setLoading(false)
-      return
+    } catch (error) {
+      toast.error("Помилка сервера")
     }
 
-    toast.success("Реєстрація успішна 🎉")
-
-    await signIn("credentials", {
-      email,
-      password,
-      callbackUrl: "/profile",
-    })
+    setLoading(false)
   }
 
   return (
@@ -72,18 +76,62 @@ window.location.href = "/profile"
           Реєстрація
         </h1>
 
-        <input placeholder="Ім’я" className="input" onChange={(e)=>setFirstName(e.target.value)} />
-        <input placeholder="Прізвище" className="input mt-3" onChange={(e)=>setLastName(e.target.value)} />
-        <input placeholder="Вік" className="input mt-3" onChange={(e)=>setAge(e.target.value)} />
-        <input placeholder="Місто" className="input mt-3" onChange={(e)=>setCity(e.target.value)} />
-        <input placeholder="Телефон" className="input mt-3" onChange={(e)=>setPhone(e.target.value)} />
-        <input placeholder="Email" className="input mt-3" onChange={(e)=>setEmail(e.target.value)} />
-        <input type="password" placeholder="Пароль" className="input mt-3" onChange={(e)=>setPassword(e.target.value)} />
+        <input
+          placeholder="Ім’я"
+          className="input"
+          onChange={(e) => setFirstName(e.target.value)}
+        />
+
+        <input
+          placeholder="Прізвище"
+          className="input mt-3"
+          onChange={(e) => setLastName(e.target.value)}
+        />
+
+        <input
+          placeholder="Вік"
+          className="input mt-3"
+          onChange={(e) => setAge(e.target.value)}
+        />
+
+        <input
+          placeholder="Місто"
+          className="input mt-3"
+          onChange={(e) => setCity(e.target.value)}
+        />
+
+        <input
+          placeholder="Телефон"
+          className="input mt-3"
+          onChange={(e) => setPhone(e.target.value)}
+        />
+
+        <input
+          placeholder="Email"
+          className="input mt-3"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Пароль"
+          className="input mt-3"
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
         <button
           onClick={handleRegister}
           disabled={loading}
-          className="mt-4 w-full bg-[#3F5F56] text-white py-3 rounded-lg"
+          className="
+            mt-4
+            w-full
+            bg-[#3F5F56]
+            text-white
+            py-3
+            rounded-lg
+            hover:opacity-90
+            transition
+          "
         >
           {loading ? "Завантаження..." : "Зареєструватися"}
         </button>
