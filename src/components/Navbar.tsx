@@ -1,125 +1,399 @@
 "use client"
 
 import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+import {
+  useSession,
+  signOut,
+} from "next-auth/react"
+
+import { useState } from "react"
 
 export default function Navbar() {
   const { data: session } = useSession()
 
-  const isAdmin = (session?.user as any)?.role === "ADMIN"
+  const [adminOpen, setAdminOpen] =
+    useState(false)
+
+  const isAdmin =
+    (session?.user as any)?.role === "ADMIN"
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav
+      className="
+        sticky top-0 z-50
+        backdrop-blur
+        bg-white/90
+        border-b border-gray-200
+      "
+    >
+      <div
+        className="
+          max-w-7xl mx-auto
+          px-4 md:px-6 py-4
+        "
+      >
 
-        {/* 🔹 ЛОГО */}
-        <Link
-          href="/"
-          className="text-2xl font-extrabold bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] bg-clip-text text-transparent tracking-wide"
+        {/* 🔹 LOGO */}
+
+        <div className="flex justify-center mb-4 md:hidden">
+          <Link
+            href="/"
+            className="
+              text-4xl font-extrabold
+              bg-gradient-to-r
+              from-[#3F5F56]
+              to-[#D9A5A0]
+              bg-clip-text
+              text-transparent
+              text-center
+            "
+          >
+            Euphoria Bags
+          </Link>
+        </div>
+
+        <div
+          className="
+            hidden md:flex
+            justify-between items-center
+          "
         >
-          Euphoria Bags
-        </Link>
 
-        {/* 🔹 МЕНЮ */}
-        <div className="flex gap-6 items-center text-sm font-medium">
-
-          <Link href="/" className="hover:text-[#D9A5A0] transition">
-            Головна
+          <Link
+            href="/"
+            className="
+              text-3xl font-extrabold
+              bg-gradient-to-r
+              from-[#3F5F56]
+              to-[#D9A5A0]
+              bg-clip-text
+              text-transparent
+            "
+          >
+            Euphoria Bags
           </Link>
 
-          <Link href="/catalog" className="hover:text-[#D9A5A0] transition">
-            Товари
-          </Link>
+          <div className="flex gap-6 items-center text-sm font-medium">
 
-          <Link href="/categories" className="hover:text-[#D9A5A0] transition">
-            Категорії
-          </Link>
+            <Link href="/">
+              Головна
+            </Link>
 
-          {/* 🔥 НОВІ СЕКЦІЇ */}
-          <Link href="/hits" className="hover:text-[#ff6b6b] transition">
-            🔥 Хіти
-          </Link>
+            <Link href="/catalog">
+              Товари
+            </Link>
 
-          <Link href="/new" className="hover:text-[#3F5F56] transition">
-            🆕 Новинки
-          </Link>
+            <Link href="/categories">
+              Категорії
+            </Link>
 
-          <Link href="/sale" className="hover:text-green-600 transition">
-            💰 Знижки
-          </Link>
+            <Link href="/hits">
+              🔥 Хіти
+            </Link>
 
-          {/* 🔥 ADMIN MENU */}
-          {isAdmin && (
-            <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
+            <Link href="/new">
+              🆕 Новинки
+            </Link>
 
-              <Link
-                href="/admin/products"
-                className="text-green-600 hover:underline"
-              >
-                ⚙️ Товари
-              </Link>
+            <Link href="/sale">
+              💰 Знижки
+            </Link>
 
-              <Link
-                href="/admin/orders"
-                className="text-green-600 hover:underline"
-              >
-                📦 Замовлення
-              </Link>
+            {/* 👑 ADMIN */}
 
-              <Link
-                href="/admin/categories"
-                className="text-green-600 hover:underline"
-              >
-                🗂 Категорії
-              </Link>
+            {isAdmin && (
+              <div className="relative z-50">
 
-            </div>
-          )}
+                <button
+                  onClick={() =>
+                    setAdminOpen(!adminOpen)
+                  }
+                  className="
+                    flex items-center gap-2
+                    text-green-600
+                    font-semibold
+                  "
+                >
+                  ⚙️ Управління
 
-          {!session ? (
-            <>
-              <Link href="/login" className="hover:text-[#D9A5A0] transition">
-                Увійти
-              </Link>
+                  <span
+                    className={`
+                      transition
+                      ${
+                        adminOpen
+                          ? "rotate-180"
+                          : ""
+                      }
+                    `}
+                  >
+                    ▼
+                  </span>
+                </button>
 
-              <Link
-                href="/register"
-                className="bg-[#D9A5A0] text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-105 transition"
-              >
-                Реєстрація
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/cart" className="hover:text-[#D9A5A0] transition">
-                🛒 Кошик
-              </Link>
+                {adminOpen && (
+                  <div
+                    className="
+                      absolute right-0 top-12
+                      w-56
+                      bg-white
+                      rounded-2xl
+                      shadow-2xl
+                      border border-gray-100
+                      p-2
+                      flex flex-col gap-1
+                    "
+                  >
 
-              <Link href="/profile" className="hover:text-[#D9A5A0] transition">
-                👤 Профіль
-              </Link>
+                    <Link
+                      href="/admin/products"
+                      onClick={() =>
+                        setAdminOpen(false)
+                      }
+                      className="
+                        px-4 py-3 rounded-xl
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      📦 Товари
+                    </Link>
 
-              <div className="flex items-center gap-2 text-xs">
+                    <Link
+                      href="/admin/orders"
+                      onClick={() =>
+                        setAdminOpen(false)
+                      }
+                      className="
+                        px-4 py-3 rounded-xl
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      🧾 Замовлення
+                    </Link>
 
-                <span className="text-gray-600">
+                    <Link
+                      href="/admin/categories"
+                      onClick={() =>
+                        setAdminOpen(false)
+                      }
+                      className="
+                        px-4 py-3 rounded-xl
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      🗂 Категорії
+                    </Link>
+
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!session ? (
+              <>
+                <Link href="/login">
+                  Увійти
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="
+                    bg-[#D9A5A0]
+                    text-white
+                    px-4 py-2
+                    rounded-xl
+                  "
+                >
+                  Реєстрація
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/cart">
+                  🛒 Кошик
+                </Link>
+
+                <Link href="/profile">
+                  👤 Профіль
+                </Link>
+
+                <span className="text-gray-500 text-xs">
                   {session.user?.email}
                 </span>
 
                 {isAdmin && (
-                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                  <span
+                    className="
+                      bg-green-100
+                      text-green-700
+                      px-2 py-1
+                      rounded-full
+                      text-xs
+                      font-bold
+                    "
+                  >
                     ADMIN
                   </span>
                 )}
-              </div>
+
+                <button
+                  onClick={() => signOut()}
+                  className="
+                    text-red-500
+                    hover:text-red-700
+                  "
+                >
+                  Вийти
+                </button>
+              </>
+            )}
+
+          </div>
+        </div>
+
+        {/* 📱 MOBILE */}
+
+        <div
+          className="
+            flex md:hidden
+            flex-wrap
+            justify-center
+            gap-4
+            text-sm font-semibold
+          "
+        >
+
+          <Link href="/">Головна</Link>
+          <Link href="/catalog">Товари</Link>
+          <Link href="/categories">Категорії</Link>
+          <Link href="/hits">🔥 Хіти</Link>
+          <Link href="/new">🆕 Новинки</Link>
+          <Link href="/sale">💰 Знижки</Link>
+
+          {isAdmin && (
+            <div className="relative z-50">
+
+              <button
+                onClick={() =>
+                  setAdminOpen(!adminOpen)
+                }
+                className="
+                  flex items-center gap-2
+                  text-green-600
+                  font-semibold
+                "
+              >
+                ⚙️ Управління
+
+                <span
+                  className={`
+                    transition
+                    ${
+                      adminOpen
+                        ? "rotate-180"
+                        : ""
+                    }
+                  `}
+                >
+                  ▼
+                </span>
+              </button>
+
+              {adminOpen && (
+                <div
+                  className="
+                    absolute left-1/2
+                    -translate-x-1/2
+                    top-10
+                    w-52
+                    bg-white
+                    rounded-2xl
+                    shadow-2xl
+                    border border-gray-100
+                    p-2
+                    flex flex-col gap-1
+                  "
+                >
+
+                  <Link
+                    href="/admin/products"
+                    onClick={() =>
+                      setAdminOpen(false)
+                    }
+                    className="
+                      px-4 py-3 rounded-xl
+                      hover:bg-gray-100
+                    "
+                  >
+                    📦 Товари
+                  </Link>
+
+                  <Link
+                    href="/admin/orders"
+                    onClick={() =>
+                      setAdminOpen(false)
+                    }
+                    className="
+                      px-4 py-3 rounded-xl
+                      hover:bg-gray-100
+                    "
+                  >
+                    🧾 Замовлення
+                  </Link>
+
+                  <Link
+                    href="/admin/categories"
+                    onClick={() =>
+                      setAdminOpen(false)
+                    }
+                    className="
+                      px-4 py-3 rounded-xl
+                      hover:bg-gray-100
+                    "
+                  >
+                    🗂 Категорії
+                  </Link>
+
+                </div>
+              )}
+            </div>
+          )}
+
+          {session ? (
+            <>
+              <Link href="/cart">
+                🛒 Кошик
+              </Link>
+
+              <Link href="/profile">
+                👤 Профіль
+              </Link>
+
+              <span className="text-gray-500 text-xs">
+                {session.user?.email}
+              </span>
 
               <button
                 onClick={() => signOut()}
-                className="text-red-500 hover:underline"
+                className="text-red-500"
               >
                 Вийти
               </button>
             </>
+          ) : (
+            <>
+              <Link href="/login">
+                Увійти
+              </Link>
+
+              <Link href="/register">
+                Реєстрація
+              </Link>
+            </>
           )}
+
         </div>
       </div>
     </nav>
