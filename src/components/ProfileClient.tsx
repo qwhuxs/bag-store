@@ -1,18 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import Image from "next/image"
 
-export default function ProfileClient({ user }: any) {
+export default function ProfileClient({
+  user,
+}: any) {
+
   const router = useRouter()
 
-  // 🔥 DEBUG
-  useEffect(() => {
-    console.log("PROFILE CLIENT WORKING")
-  }, [])
+  const [isEditing, setIsEditing] =
+    useState(false)
 
-  const [isEditing, setIsEditing] = useState(false)
+  const [avatar, setAvatar] =
+    useState(user.image || "")
 
   const [form, setForm] = useState({
     firstName: user.firstName || "",
@@ -20,95 +23,253 @@ export default function ProfileClient({ user }: any) {
     age: user.age || "",
     city: user.city || "",
     phone: user.phone || "",
+    image: user.image || "",
   })
 
   const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleImageUpload = (
+    e: any
+  ) => {
+
+    const file = e.target.files?.[0]
+
+    if (!file) return
+
+    const reader = new FileReader()
+
+    reader.onloadend = () => {
+
+      setAvatar(reader.result as string)
+
+      setForm({
+        ...form,
+        image: reader.result,
+      })
+    }
+
+    reader.readAsDataURL(file)
   }
 
   const handleSave = async () => {
-    const res = await fetch("/api/profile", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    })
+
+    const res = await fetch(
+      "/api/profile",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify(form),
+      }
+    )
 
     if (res.ok) {
-      toast.success("Дані оновлено ✅")
+
+      toast.success(
+        "Профіль оновлено ✅"
+      )
+
       setIsEditing(false)
+
       router.refresh()
+
     } else {
       toast.error("Помилка ❌")
     }
   }
 
   return (
-    <div className="
-      bg-white
-      rounded-3xl
-      shadow-lg
-      p-8
-      mb-10
-      border border-gray-100
-      relative
-      overflow-hidden
-    ">
+    <div
+      className="
+        max-w-6xl mx-auto
+        px-4 py-8
+      "
+    >
 
-      {/* 🎨 фон */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#3F5F56]/10 to-[#D9A5A0]/10 opacity-50" />
-
-      <div className="relative z-10">
+      <div
+        className="
+          bg-white
+          rounded-[35px]
+          shadow-xl
+          p-5 md:p-10
+        "
+      >
 
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">
-            👤 Профіль
-          </h1>
+
+        <div
+          className="
+            flex flex-col md:flex-row
+            md:items-center
+            md:justify-between
+            gap-6
+            mb-10
+          "
+        >
+
+          <div
+            className="
+              flex flex-col md:flex-row
+              items-center
+              gap-5
+            "
+          >
+
+            {/* AVATAR */}
+
+            <div
+              className="
+                relative
+                w-28 h-28
+                rounded-full
+                overflow-hidden
+                border-4 border-white
+                shadow-lg
+              "
+            >
+
+              <Image
+                src={
+                  avatar ||
+                  "/images/default-avatar.png"
+                }
+                alt="avatar"
+                fill
+                className="object-cover"
+              />
+
+            </div>
+
+            <h1
+              className="
+                text-4xl md:text-5xl
+                font-black
+                text-[#1f2d4d]
+                text-center md:text-left
+              "
+            >
+              Профіль
+            </h1>
+
+          </div>
 
           {!isEditing && (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() =>
+                setIsEditing(true)
+              }
               className="
-                flex items-center gap-2
-                px-4 py-2
-                border rounded-xl
-                hover:bg-gray-50
+                border
+                px-6 py-3
+                rounded-2xl
+                hover:bg-gray-100
                 transition
+                font-medium
               "
             >
               ✏️ Змінити
             </button>
           )}
+
         </div>
 
         {!isEditing ? (
-          <div className="grid md:grid-cols-2 gap-6 text-gray-700">
 
-            <div className="space-y-3">
-              <p><span className="font-semibold">Email:</span> {user.email}</p>
-              <p><span className="font-semibold">Ім’я:</span> {user.firstName || "-"}</p>
-              <p><span className="font-semibold">Прізвище:</span> {user.lastName || "-"}</p>
+          <div
+            className="
+              grid
+              grid-cols-1
+              md:grid-cols-2
+              gap-6
+              text-lg
+            "
+          >
+
+            <div className="space-y-4">
+
+              <p>
+                <span className="font-bold">
+                  Email:
+                </span>
+                {" "}
+                {user.email}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  Ім’я:
+                </span>
+                {" "}
+                {user.firstName || "-"}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  Прізвище:
+                </span>
+                {" "}
+                {user.lastName || "-"}
+              </p>
+
             </div>
 
-            <div className="space-y-3">
-              <p><span className="font-semibold">Вік:</span> {user.age || "-"}</p>
-              <p><span className="font-semibold">Місто:</span> {user.city || "-"}</p>
-              <p><span className="font-semibold">Телефон:</span> {user.phone || "-"}</p>
+            <div className="space-y-4">
+
+              <p>
+                <span className="font-bold">
+                  Вік:
+                </span>
+                {" "}
+                {user.age || "-"}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  Місто:
+                </span>
+                {" "}
+                {user.city || "-"}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  Телефон:
+                </span>
+                {" "}
+                {user.phone || "-"}
+              </p>
+
             </div>
 
           </div>
+
         ) : (
+
           <>
-            <div className="grid md:grid-cols-2 gap-4">
+            {/* FORM */}
+
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-2
+                gap-5
+              "
+            >
 
               <input
                 name="firstName"
                 value={form.firstName}
                 onChange={handleChange}
-                placeholder="Ім'я"
-                className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3F5F56]"
+                placeholder="Ім’я"
+                className="input"
               />
 
               <input
@@ -116,7 +277,7 @@ export default function ProfileClient({ user }: any) {
                 value={form.lastName}
                 onChange={handleChange}
                 placeholder="Прізвище"
-                className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3F5F56]"
+                className="input"
               />
 
               <input
@@ -124,7 +285,7 @@ export default function ProfileClient({ user }: any) {
                 value={form.age}
                 onChange={handleChange}
                 placeholder="Вік"
-                className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3F5F56]"
+                className="input"
               />
 
               <input
@@ -132,7 +293,7 @@ export default function ProfileClient({ user }: any) {
                 value={form.city}
                 onChange={handleChange}
                 placeholder="Місто"
-                className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3F5F56]"
+                className="input"
               />
 
               <input
@@ -140,31 +301,75 @@ export default function ProfileClient({ user }: any) {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="Телефон"
-                className="border p-3 rounded-lg col-span-2 focus:outline-none focus:ring-2 focus:ring-[#3F5F56]"
+                className="input"
+              />
+
+              <input
+                value={user.email}
+                disabled
+                className="
+                  input
+                  bg-gray-100
+                "
               />
 
             </div>
 
-            <div className="flex gap-3 mt-6">
+            {/* IMAGE */}
+
+            <div className="mt-6">
+
+              <p className="font-semibold mb-3">
+                Фото профілю
+              </p>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full"
+              />
+
+            </div>
+
+            {/* BUTTONS */}
+
+            <div
+              className="
+                flex flex-col md:flex-row
+                gap-4
+                mt-8
+              "
+            >
 
               <button
                 onClick={handleSave}
                 className="
                   flex-1
-                  bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0]
-                  text-white py-3 rounded-lg
-                  hover:scale-105 transition
+                  bg-gradient-to-r
+                  from-[#3F5F56]
+                  to-[#D9A5A0]
+                  text-white
+                  py-4
+                  rounded-2xl
+                  font-semibold
+                  hover:scale-105
+                  transition
                 "
               >
                 Зберегти
               </button>
 
               <button
-                onClick={() => setIsEditing(false)}
+                onClick={() =>
+                  setIsEditing(false)
+                }
                 className="
                   flex-1
-                  border py-3 rounded-lg
-                  hover:bg-gray-50 transition
+                  border
+                  py-4
+                  rounded-2xl
+                  hover:bg-gray-100
                 "
               >
                 Скасувати
