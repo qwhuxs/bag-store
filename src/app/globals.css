@@ -6,9 +6,14 @@
   --bg: #f5f3f2;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--bg);
+  background: linear-gradient(to bottom right, #f5f3f2, #e9e4e1);
   font-family: system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 a {
@@ -24,22 +29,30 @@ a {
   scrollbar-width: none;
 }
 
+/* 🔹 INPUTS */
+
 .input {
   width: 100%;
   border: 1px solid #d1d5db;
   padding: 12px;
   border-radius: 10px;
+  outline: none;
+  transition: 0.2s;
+  font-size: 16px;
 }
 
 .input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #3F5F56;
+  border-color: #3F5F56;
+  box-shadow: 0 0 0 2px rgba(63, 95, 86, 0.2);
 }
+
+/* 🔹 BUTTONS */
 
 .social-btn {
   border: 1px solid #d1d5db;
   padding: 10px;
   border-radius: 10px;
+  transition: 0.2s;
 }
 
 .social-btn:hover {
@@ -53,19 +66,94 @@ a {
   border-radius: 10px;
 }
 
-.input {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  padding: 10px;
-  border-radius: 10px;
-  outline: none;
-}
+/* 🔹 MOBILE */
 
-.input:focus {
-  border-color: #3F5F56;
-  box-shadow: 0 0 0 2px rgba(63, 95, 86, 0.2);
-}
+@media (max-width: 768px) {
 
-body {
-  background: linear-gradient(to bottom right, #f5f3f2, #e9e4e1);
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 28px !important;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 22px !important;
+  }
+
+  h3 {
+    font-size: 18px !important;
+  }
+
+  /* 🔹 CONTAINERS */
+
+  .max-w-7xl {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* 🔹 NAVBAR */
+
+  nav {
+    flex-wrap: wrap;
+    gap: 12px !important;
+  }
+
+  /* 🔹 HERO */
+
+  .hero-mobile {
+    padding: 32px 20px !important;
+    border-radius: 20px !important;
+  }
+
+  /* 🔹 BUTTONS */
+
+  button,
+  .btn {
+    width: 100%;
+  }
+
+  /* 🔹 CARDS */
+
+  .card-mobile {
+    padding: 18px !important;
+    border-radius: 18px !important;
+  }
+
+  /* 🔹 PRODUCT GRID */
+
+  .product-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* 🔹 PROFILE */
+
+  .profile-mobile {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  /* 🔹 ORDERS */
+
+  .order-mobile {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* 🔹 IMAGES */
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 🔹 TABLES */
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }
