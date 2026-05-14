@@ -108,3 +108,60 @@ export async function PUT(
     )
   }
 }
+
+// DELETE API route
+// для видалення товару
+export async function DELETE(
+
+  req: Request,
+
+  context: {
+    params: Promise<{
+      id: string
+    }>
+  }
+) {
+
+  try {
+
+    // Перевірка адміністратора
+    await requireAdmin()
+
+    // Отримання id товару
+    const { id } =
+      await context.params
+
+    // Видалення товару
+    await prisma.product.delete({
+
+      where: { id },
+    })
+
+    // Успішна відповідь
+    return NextResponse.json({
+
+      ok: true,
+    })
+
+  } catch (error) {
+
+    // Виведення помилки
+    console.error(
+      "DELETE ERROR:",
+      error
+    )
+
+    // Server error
+    return NextResponse.json(
+
+      {
+        error:
+          "Server error",
+      },
+
+      {
+        status: 500,
+      }
+    )
+  }
+}

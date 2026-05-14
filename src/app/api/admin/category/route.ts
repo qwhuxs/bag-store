@@ -15,14 +15,23 @@ export async function POST(
   await requireAdmin()
 
   // Отримання даних із body
-  const { name } =
-    await req.json()
+  const {
+    name,
+    image,
+  } = await req.json()
 
   // Створення категорії у БД
   const category =
     await prisma.category.create({
 
-      data: { name },
+      data: {
+
+        // Назва категорії
+        name,
+
+        // Фото категорії
+        image,
+      },
     })
 
   // Повернення створеної категорії

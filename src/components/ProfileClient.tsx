@@ -199,6 +199,8 @@ export default function ProfileClient({
 
                 fill
 
+                sizes="112px"
+
                 className="object-cover"
               />
 

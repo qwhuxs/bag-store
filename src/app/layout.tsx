@@ -96,7 +96,12 @@ export default function RootLayout({
 }) {
 
   return (
-    <html lang="uk">
+
+    // ✅ ДОДАНО data-scroll-behavior
+    <html
+      lang="uk"
+      data-scroll-behavior="smooth"
+    >
 
       <body
         className="

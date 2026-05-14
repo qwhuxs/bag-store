@@ -1,78 +1,139 @@
 "use client"
 
-// useState використовується для збереження стану поля вводу
+// useState використовується для збереження стану
 import { useState } from "react"
 
-// useRouter потрібен для оновлення сторінки без перезавантаження
+// useRouter потрібен для оновлення сторінки
 import { useRouter } from "next/navigation"
 
-// Бібліотека для показу повідомлень (toast)
+// Бібліотека для toast-повідомлень
 import toast from "react-hot-toast"
 
 export default function CategoriesClient({
   categories,
 }: any) {
 
-  // Router для оновлення даних після створення/видалення
+  // Router для оновлення даних
   const router = useRouter()
 
-  // Стан для збереження назви нової категорії
+  // Назва категорії
   const [name, setName] = useState("")
 
-  // Функція створення категорії
+  // Фото категорії
+  const [image, setImage] =
+    useState<File | null>(null)
+
+  // Loading під час upload
+  const [loading, setLoading] =
+    useState(false)
+
+  // 🔥 СТВОРЕННЯ КАТЕГОРІЇ
   const handleCreate = async () => {
 
-    // Перевірка, чи введена назва
-    if (!name)
-      return toast.error("Введи назву 😅")
+    // Перевірка назви
+    if (!name.trim()) {
+      toast.error("Введи назву 😅")
+      return
+    }
 
     try {
 
-      // POST-запит до API для створення категорії
+      setLoading(true)
+
+      let imageUrl = ""
+
+      // Якщо фото вибране
+      if (image) {
+
+        // FormData потрібен для upload файлів
+        const formData = new FormData()
+
+        // Додаємо файл
+        formData.append("file", image)
+
+        // Запит на upload API
+        const uploadRes = await fetch(
+          "/api/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        )
+
+        // Отримання відповіді
+        const uploadData =
+          await uploadRes.json()
+
+        // URL завантаженого фото
+        imageUrl = uploadData.url
+      }
+
+      // 🗂 СТВОРЕННЯ КАТЕГОРІЇ
       const res = await fetch(
         "/api/admin/category",
         {
           method: "POST",
 
-          // Передача назви категорії
-          body: JSON.stringify({ name }),
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+
+            // Назва категорії
+            name,
+
+            // Фото категорії
+            image: imageUrl,
+          }),
         }
       )
 
-      // Якщо сталася помилка
-      if (!res.ok) throw new Error()
+      // Якщо помилка
+      if (!res.ok) {
+        throw new Error()
+      }
 
-      // Повідомлення про успішне створення
+      // Success toast
       toast.success(
         "Категорію створено ✅"
       )
 
-      // Очищення input
+      // Очищення полів
       setName("")
+      setImage(null)
 
       // Оновлення сторінки
       router.refresh()
 
     } catch {
 
-      // Повідомлення про помилку
+      // Error toast
       toast.error("Помилка ❌")
+
+    } finally {
+
+      // Вимкнення loading
+      setLoading(false)
     }
   }
 
-  // Функція видалення категорії
+  // 🔥 ВИДАЛЕННЯ КАТЕГОРІЇ
   const handleDelete = async (
     id: string
   ) => {
 
     // Підтвердження видалення
-    if (
-      !confirm("Видалити категорію?")
-    ) return
+    const confirmDelete = confirm(
+      "Видалити категорію?"
+    )
+
+    if (!confirmDelete) return
 
     try {
 
-      // DELETE-запит до API
+      // DELETE request
       const res = await fetch(
         `/api/admin/category/${id}`,
         {
@@ -81,9 +142,11 @@ export default function CategoriesClient({
       )
 
       // Якщо помилка
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        throw new Error()
+      }
 
-      // Повідомлення про успішне видалення
+      // Success toast
       toast.success("Видалено 🗑")
 
       // Оновлення сторінки
@@ -91,7 +154,7 @@ export default function CategoriesClient({
 
     } catch {
 
-      // Повідомлення про помилку
+      // Error toast
       toast.error("Помилка ❌")
     }
   }
@@ -99,7 +162,7 @@ export default function CategoriesClient({
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-6 py-8">
 
-      {/* Заголовок сторінки */}
+      {/* 🔥 HEADER */}
       <div className="mb-10">
 
         <h1
@@ -112,7 +175,7 @@ export default function CategoriesClient({
           🗂 Категорії
         </h1>
 
-        {/* Декоративна лінія */}
+        {/* Лінія */}
         <div
           className="
             w-24 h-1.5
@@ -125,7 +188,7 @@ export default function CategoriesClient({
 
       </div>
 
-      {/* Блок створення категорії */}
+      {/* 🔥 CREATE CATEGORY */}
       <div
         className="
           bg-white
@@ -138,16 +201,15 @@ export default function CategoriesClient({
 
         <div
           className="
-            flex flex-col md:flex-row
+            flex flex-col
             gap-4
           "
         >
 
-          {/* Input для введення назви */}
+          {/* 📝 НАЗВА */}
           <input
             value={name}
 
-            // Оновлення стану при введенні тексту
             onChange={(e) =>
               setName(e.target.value)
             }
@@ -155,7 +217,6 @@ export default function CategoriesClient({
             placeholder="Нова категорія"
 
             className="
-              flex-1
               border border-gray-200
               p-4
               rounded-2xl
@@ -165,9 +226,38 @@ export default function CategoriesClient({
             "
           />
 
-          {/* Кнопка створення */}
+          {/* 📤 UPLOAD ФОТО */}
+          <input
+            type="file"
+
+            accept="image/*"
+
+            onChange={(e) => {
+
+              // Якщо файл вибраний
+              if (
+                e.target.files?.[0]
+              ) {
+
+                // Збереження файлу
+                setImage(
+                  e.target.files[0]
+                )
+              }
+            }}
+
+            className="
+              border border-gray-200
+              p-4
+              rounded-2xl
+            "
+          />
+
+          {/* ➕ BUTTON */}
           <button
             onClick={handleCreate}
+
+            disabled={loading}
 
             className="
               bg-gradient-to-r
@@ -181,17 +271,20 @@ export default function CategoriesClient({
               transition
             "
           >
-            + Додати
+            {loading
+              ? "Завантаження..."
+              : "+ Додати"}
           </button>
 
         </div>
 
       </div>
 
-      {/* Список категорій */}
+      {/* 🔥 LIST */}
       <div className="grid gap-5">
 
         {categories.map((cat: any) => (
+
           <div
             key={cat.id}
 
@@ -214,9 +307,10 @@ export default function CategoriesClient({
               "
             >
 
-              {/* Інформація про категорію */}
+              {/* 📦 INFO */}
               <div>
 
+                {/* 📝 NAME */}
                 <h2
                   className="
                     text-2xl
@@ -228,7 +322,7 @@ export default function CategoriesClient({
                   {cat.name}
                 </h2>
 
-                {/* Кількість товарів у категорії */}
+                {/* 📦 PRODUCTS COUNT */}
                 <p
                   className="
                     text-gray-500
@@ -236,6 +330,7 @@ export default function CategoriesClient({
                   "
                 >
                   Товарів:
+
                   {" "}
 
                   <span className="font-semibold">
@@ -245,7 +340,7 @@ export default function CategoriesClient({
 
               </div>
 
-              {/* Кнопка видалення */}
+              {/* ❌ DELETE */}
               <button
                 onClick={() =>
                   handleDelete(cat.id)

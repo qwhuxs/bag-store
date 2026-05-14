@@ -36,26 +36,3 @@ export async function POST(
     ok: true,
   })
 }
-
-// DELETE API route
-// для видалення товару
-export async function DELETE(
-  req: Request
-) {
-
-  // Отримання id товару
-  const { id } =
-    await req.json()
-
-  // Видалення товару з БД
-  await prisma.product.delete({
-
-    where: { id },
-  })
-
-  // Повернення успішної відповіді
-  return Response.json({
-
-    ok: true,
-  })
-}

@@ -47,25 +47,29 @@ export const authOptions:
         process.env.GITHUB_SECRET!,
     }),
 
-    // Google авторизація
-    GoogleProvider({
+// Google авторизація
+GoogleProvider({
 
-      clientId:
-        process.env.GOOGLE_CLIENT_ID!,
+  clientId:
+    process.env.GOOGLE_CLIENT_ID!,
 
-      clientSecret:
-        process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+  clientSecret:
+    process.env.GOOGLE_CLIENT_SECRET!,
 
-    // Discord авторизація
-    DiscordProvider({
+  allowDangerousEmailAccountLinking: true,
+}),
 
-      clientId:
-        process.env.DISCORD_CLIENT_ID!,
+// Discord авторизація
+DiscordProvider({
 
-      clientSecret:
-        process.env.DISCORD_CLIENT_SECRET!,
-    }),
+  clientId:
+    process.env.DISCORD_CLIENT_ID!,
+
+  clientSecret:
+    process.env.DISCORD_CLIENT_SECRET!,
+
+  allowDangerousEmailAccountLinking: true,
+}),
 
     // Авторизація через email + пароль
     CredentialsProvider({
