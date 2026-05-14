@@ -1,0 +1,43 @@
+name: CI Checks
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Клонування репозиторію
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+        with:
+          node-version: 20
+
+      # Встановлення залежностей
+      - name: Install dependencies
+        run: npm install
+
+      # Lint
+      - name: Run lint
+        run: npm run lint
+
+      # Тести
+      - name: Run tests
+        run: npm run test
