@@ -1,19 +1,31 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+
+// Компонент Next.js для оптимізації зображень
 import Image from "next/image"
 
 export default async function HitsPage() {
+
+  // Отримання товарів із бази даних
   let products = await prisma.product.findMany({
+
+    // Максимальна кількість товарів
     take: 20,
   })
 
+  // Перемішування товарів у випадковому порядку
   products = products
+
+    // random сортування
     .sort(() => 0.5 - Math.random())
+
+    // Вибір перших 8 товарів
     .slice(0, 8)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
+      {/* Заголовок сторінки */}
       <h1
         className="
           text-3xl md:text-5xl
@@ -26,6 +38,7 @@ export default async function HitsPage() {
         🔥 Хіти продажу
       </h1>
 
+      {/* Сітка товарів */}
       <div
         className="
           grid
@@ -35,9 +48,11 @@ export default async function HitsPage() {
         "
       >
 
+        {/* Виведення товарів */}
         {products.map((p) => (
           <div
             key={p.id}
+
             className="
               bg-white
               rounded-3xl
@@ -50,15 +65,26 @@ export default async function HitsPage() {
             "
           >
 
-            {/* IMAGE */}
+            {/* Блок зображення */}
+            <div
+              className="
+                relative
+                h-52 w-full
+                overflow-hidden
+              "
+            >
 
-            <div className="relative h-52 w-full overflow-hidden">
-
+              {/* Оптимізоване зображення */}
               <Image
                 src={p.image}
                 alt={p.name}
                 fill
-                sizes="(max-width: 768px) 50vw, 25vw"
+
+                sizes="
+                  (max-width: 768px) 50vw,
+                  25vw
+                "
+
                 className="
                   object-cover
                   group-hover:scale-110
@@ -68,10 +94,10 @@ export default async function HitsPage() {
 
             </div>
 
-            {/* CONTENT */}
-
+            {/* Контент картки */}
             <div className="p-4 flex flex-col flex-1">
 
+              {/* Назва товару */}
               <h2
                 className="
                   font-bold
@@ -84,6 +110,7 @@ export default async function HitsPage() {
                 {p.name}
               </h2>
 
+              {/* Ціна */}
               <p
                 className="
                   text-[#D9A5A0]
@@ -95,12 +122,15 @@ export default async function HitsPage() {
                 {p.price} грн
               </p>
 
+              {/* Кількість продажів */}
               <p className="text-xs text-gray-400 mt-1">
                 Продано: {p.sales}
               </p>
 
+              {/* Кнопка переходу */}
               <Link
                 href={`/product/${p.id}`}
+
                 className="
                   mt-4
                   text-center

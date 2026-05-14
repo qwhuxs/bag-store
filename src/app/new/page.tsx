@@ -1,20 +1,34 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+
+// Компонент Next.js для оптимізації зображень
 import Image from "next/image"
 
 export default async function NewPage() {
+
+  // Отримання нових товарів із бази даних
   let products = await prisma.product.findMany({
+
+    // Сортування від нових до старих
     orderBy: { createdAt: "desc" },
+
+    // Максимальна кількість товарів
     take: 20,
   })
 
+  // Випадкове перемішування товарів
   products = products
+
+    // Random сортування
     .sort(() => 0.5 - Math.random())
+
+    // Вибір перших 8 товарів
     .slice(0, 8)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
+      {/* Заголовок сторінки */}
       <h1
         className="
           text-3xl md:text-5xl
@@ -27,6 +41,7 @@ export default async function NewPage() {
         🆕 Новинки
       </h1>
 
+      {/* Сітка товарів */}
       <div
         className="
           grid
@@ -36,9 +51,11 @@ export default async function NewPage() {
         "
       >
 
+        {/* Виведення товарів */}
         {products.map((p) => (
           <div
             key={p.id}
+
             className="
               bg-white
               rounded-3xl
@@ -51,15 +68,26 @@ export default async function NewPage() {
             "
           >
 
-            {/* IMAGE */}
+            {/* Блок зображення */}
+            <div
+              className="
+                relative
+                h-52 w-full
+                overflow-hidden
+              "
+            >
 
-            <div className="relative h-52 w-full overflow-hidden">
-
+              {/* Оптимізоване зображення */}
               <Image
                 src={p.image}
                 alt={p.name}
                 fill
-                sizes="(max-width: 768px) 50vw, 25vw"
+
+                sizes="
+                  (max-width: 768px) 50vw,
+                  25vw
+                "
+
                 className="
                   object-cover
                   group-hover:scale-110
@@ -69,10 +97,10 @@ export default async function NewPage() {
 
             </div>
 
-            {/* CONTENT */}
-
+            {/* Контент картки */}
             <div className="p-4 flex flex-col flex-1">
 
+              {/* Назва товару */}
               <h2
                 className="
                   font-bold
@@ -85,6 +113,7 @@ export default async function NewPage() {
                 {p.name}
               </h2>
 
+              {/* Ціна товару */}
               <p
                 className="
                   text-[#D9A5A0]
@@ -96,8 +125,10 @@ export default async function NewPage() {
                 {p.price} грн
               </p>
 
+              {/* Кнопка переходу */}
               <Link
                 href={`/product/${p.id}`}
+
                 className="
                   mt-4
                   text-center

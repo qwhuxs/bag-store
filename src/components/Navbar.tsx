@@ -1,23 +1,35 @@
 "use client"
 
+// Компонент для навігації між сторінками
 import Link from "next/link"
+
+// useSession для отримання даних сесії
+// signOut для виходу з акаунта
 import {
   useSession,
   signOut,
 } from "next-auth/react"
 
+// useState для відкриття/закриття меню
 import { useState } from "react"
 
 export default function Navbar() {
+
+  // Отримання поточної сесії
   const { data: session } = useSession()
 
+  // Стан відкриття адмін-меню
   const [adminOpen, setAdminOpen] =
     useState(false)
 
+  // Перевірка,
+  // чи користувач адміністратор
   const isAdmin =
     (session?.user as any)?.role === "ADMIN"
 
   return (
+
+    // Navbar
     <nav
       className="
         sticky top-0 z-50
@@ -26,6 +38,8 @@ export default function Navbar() {
         border-b border-gray-200
       "
     >
+
+      {/* Контейнер */}
       <div
         className="
           max-w-7xl mx-auto
@@ -33,11 +47,12 @@ export default function Navbar() {
         "
       >
 
-        {/* 🔹 LOGO */}
-
+        {/* Логотип для мобільної версії */}
         <div className="flex justify-center mb-4 md:hidden">
+
           <Link
             href="/"
+
             className="
               text-4xl font-extrabold
               bg-gradient-to-r
@@ -50,8 +65,10 @@ export default function Navbar() {
           >
             Euphoria Bags
           </Link>
+
         </div>
 
+        {/* Desktop navbar */}
         <div
           className="
             hidden md:flex
@@ -59,8 +76,10 @@ export default function Navbar() {
           "
         >
 
+          {/* Логотип */}
           <Link
             href="/"
+
             className="
               text-3xl font-extrabold
               bg-gradient-to-r
@@ -73,7 +92,13 @@ export default function Navbar() {
             Euphoria Bags
           </Link>
 
-          <div className="flex gap-6 items-center text-sm font-medium">
+          {/* Навігаційне меню */}
+          <div
+            className="
+              flex gap-6 items-center
+              text-sm font-medium
+            "
+          >
 
             <Link href="/">
               Головна
@@ -99,23 +124,27 @@ export default function Navbar() {
               💰 Знижки
             </Link>
 
-            {/* 👑 ADMIN */}
-
+            {/* Адмін-меню */}
             {isAdmin && (
+
               <div className="relative z-50">
 
+                {/* Кнопка відкриття меню */}
                 <button
                   onClick={() =>
                     setAdminOpen(!adminOpen)
                   }
+
                   className="
                     flex items-center gap-2
                     text-green-600
                     font-semibold
                   "
                 >
+
                   ⚙️ Управління
 
+                  {/* Анімація стрілки */}
                   <span
                     className={`
                       transition
@@ -128,9 +157,12 @@ export default function Navbar() {
                   >
                     ▼
                   </span>
+
                 </button>
 
+                {/* Dropdown меню */}
                 {adminOpen && (
+
                   <div
                     className="
                       absolute right-0 top-12
@@ -144,11 +176,14 @@ export default function Navbar() {
                     "
                   >
 
+                    {/* Сторінка товарів */}
                     <Link
                       href="/admin/products"
+
                       onClick={() =>
                         setAdminOpen(false)
                       }
+
                       className="
                         px-4 py-3 rounded-xl
                         hover:bg-gray-100
@@ -158,11 +193,14 @@ export default function Navbar() {
                       📦 Товари
                     </Link>
 
+                    {/* Сторінка замовлень */}
                     <Link
                       href="/admin/orders"
+
                       onClick={() =>
                         setAdminOpen(false)
                       }
+
                       className="
                         px-4 py-3 rounded-xl
                         hover:bg-gray-100
@@ -172,11 +210,14 @@ export default function Navbar() {
                       🧾 Замовлення
                     </Link>
 
+                    {/* Сторінка категорій */}
                     <Link
                       href="/admin/categories"
+
                       onClick={() =>
                         setAdminOpen(false)
                       }
+
                       className="
                         px-4 py-3 rounded-xl
                         hover:bg-gray-100
@@ -191,14 +232,20 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Якщо користувач НЕ авторизований */}
             {!session ? (
+
               <>
+
+                {/* Вхід */}
                 <Link href="/login">
                   Увійти
                 </Link>
 
+                {/* Реєстрація */}
                 <Link
                   href="/register"
+
                   className="
                     bg-[#D9A5A0]
                     text-white
@@ -208,22 +255,34 @@ export default function Navbar() {
                 >
                   Реєстрація
                 </Link>
+
               </>
+
             ) : (
+
+              // Якщо користувач авторизований
               <>
+
+                {/* Кошик */}
                 <Link href="/cart">
                   🛒 Кошик
                 </Link>
 
+                {/* Профіль */}
                 <Link href="/profile">
                   👤 Профіль
                 </Link>
 
+                {/* Email користувача */}
                 <span className="text-gray-500 text-xs">
+
                   {session.user?.email}
+
                 </span>
 
+                {/* Badge ADMIN */}
                 {isAdmin && (
+
                   <span
                     className="
                       bg-green-100
@@ -238,8 +297,10 @@ export default function Navbar() {
                   </span>
                 )}
 
+                {/* Вихід */}
                 <button
                   onClick={() => signOut()}
+
                   className="
                     text-red-500
                     hover:text-red-700
@@ -247,14 +308,14 @@ export default function Navbar() {
                 >
                   Вийти
                 </button>
+
               </>
             )}
 
           </div>
         </div>
 
-        {/* 📱 MOBILE */}
-
+        {/* Мобільна версія navbar */}
         <div
           className="
             flex md:hidden
@@ -266,25 +327,44 @@ export default function Navbar() {
         >
 
           <Link href="/">Головна</Link>
-          <Link href="/catalog">Товари</Link>
-          <Link href="/categories">Категорії</Link>
-          <Link href="/hits">🔥 Хіти</Link>
-          <Link href="/new">🆕 Новинки</Link>
-          <Link href="/sale">💰 Знижки</Link>
 
+          <Link href="/catalog">
+            Товари
+          </Link>
+
+          <Link href="/categories">
+            Категорії
+          </Link>
+
+          <Link href="/hits">
+            🔥 Хіти
+          </Link>
+
+          <Link href="/new">
+            🆕 Новинки
+          </Link>
+
+          <Link href="/sale">
+            💰 Знижки
+          </Link>
+
+          {/* Мобільне адмін-меню */}
           {isAdmin && (
+
             <div className="relative z-50">
 
               <button
                 onClick={() =>
                   setAdminOpen(!adminOpen)
                 }
+
                 className="
                   flex items-center gap-2
                   text-green-600
                   font-semibold
                 "
               >
+
                 ⚙️ Управління
 
                 <span
@@ -299,9 +379,12 @@ export default function Navbar() {
                 >
                   ▼
                 </span>
+
               </button>
 
+              {/* Dropdown для мобільної версії */}
               {adminOpen && (
+
                 <div
                   className="
                     absolute left-1/2
@@ -319,9 +402,11 @@ export default function Navbar() {
 
                   <Link
                     href="/admin/products"
+
                     onClick={() =>
                       setAdminOpen(false)
                     }
+
                     className="
                       px-4 py-3 rounded-xl
                       hover:bg-gray-100
@@ -332,9 +417,11 @@ export default function Navbar() {
 
                   <Link
                     href="/admin/orders"
+
                     onClick={() =>
                       setAdminOpen(false)
                     }
+
                     className="
                       px-4 py-3 rounded-xl
                       hover:bg-gray-100
@@ -345,9 +432,11 @@ export default function Navbar() {
 
                   <Link
                     href="/admin/categories"
+
                     onClick={() =>
                       setAdminOpen(false)
                     }
+
                     className="
                       px-4 py-3 rounded-xl
                       hover:bg-gray-100
@@ -361,8 +450,11 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* Блок користувача для мобільної версії */}
           {session ? (
+
             <>
+
               <Link href="/cart">
                 🛒 Кошик
               </Link>
@@ -372,18 +464,25 @@ export default function Navbar() {
               </Link>
 
               <span className="text-gray-500 text-xs">
+
                 {session.user?.email}
+
               </span>
 
               <button
                 onClick={() => signOut()}
+
                 className="text-red-500"
               >
                 Вийти
               </button>
+
             </>
+
           ) : (
+
             <>
+
               <Link href="/login">
                 Увійти
               </Link>
@@ -391,6 +490,7 @@ export default function Navbar() {
               <Link href="/register">
                 Реєстрація
               </Link>
+
             </>
           )}
 

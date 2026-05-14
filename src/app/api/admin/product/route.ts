@@ -1,26 +1,61 @@
+// Prisma client для роботи з БД
 import { prisma } from "@/lib/prisma"
 
-export async function POST(req: Request) {
-  const data = await req.json()
+// POST API route
+// для створення нового товару
+export async function POST(
+  req: Request
+) {
 
+  // Отримання даних із body
+  const data =
+    await req.json()
+
+  // Формування об’єкта товару
   const productData = {
+
     ...data,
-    discount: data.price > 3000 ? 10 : null,
+
+    // Якщо ціна > 3000
+    // автоматично додається знижка 10%
+    discount:
+      data.price > 3000
+        ? 10
+        : null,
   }
 
+  // Створення товару у БД
   await prisma.product.create({
+
     data: productData,
   })
 
-  return Response.json({ ok: true })
+  // Повернення успішної відповіді
+  return Response.json({
+
+    ok: true,
+  })
 }
 
-export async function DELETE(req: Request) {
-  const { id } = await req.json()
+// DELETE API route
+// для видалення товару
+export async function DELETE(
+  req: Request
+) {
 
+  // Отримання id товару
+  const { id } =
+    await req.json()
+
+  // Видалення товару з БД
   await prisma.product.delete({
+
     where: { id },
   })
 
-  return Response.json({ ok: true })
+  // Повернення успішної відповіді
+  return Response.json({
+
+    ok: true,
+  })
 }

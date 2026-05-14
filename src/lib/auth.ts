@@ -1,102 +1,227 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
+// NextAuth — бібліотека для авторизації
+import NextAuth, {
+  NextAuthOptions,
+} from "next-auth"
+
+// OAuth провайдери
 import GitHubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
 import DiscordProvider from "next-auth/providers/discord"
+
+// Авторизація через email + пароль
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+
+// Prisma adapter для збереження користувачів у БД
+import {
+  PrismaAdapter,
+} from "@next-auth/prisma-adapter"
+
+// Prisma client
 import { prisma } from "./prisma"
+
+// bcrypt для перевірки паролів
 import bcrypt from "bcryptjs"
 
-export const authOptions: NextAuthOptions = {
+// Налаштування NextAuth
+export const authOptions:
+  NextAuthOptions = {
+
+  // Підключення Prisma
   adapter: PrismaAdapter(prisma),
 
+  // JWT стратегія сесії
   session: {
     strategy: "jwt",
   },
 
+  // Провайдери авторизації
   providers: [
+
+    // GitHub авторизація
     GitHubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+
+      clientId:
+        process.env.GITHUB_ID!,
+
+      clientSecret:
+        process.env.GITHUB_SECRET!,
     }),
 
-GoogleProvider({
-  clientId: process.env.GOOGLE_CLIENT_ID!,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-}),
+    // Google авторизація
+    GoogleProvider({
 
+      clientId:
+        process.env.GOOGLE_CLIENT_ID!,
+
+      clientSecret:
+        process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+
+    // Discord авторизація
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+
+      clientId:
+        process.env.DISCORD_CLIENT_ID!,
+
+      clientSecret:
+        process.env.DISCORD_CLIENT_SECRET!,
     }),
 
+    // Авторизація через email + пароль
     CredentialsProvider({
+
       name: "Credentials",
+
+      // Поля форми
       credentials: {
+
         email: {},
+
         password: {},
       },
+
+      // Перевірка користувача
       async authorize(credentials) {
+
         try {
-          if (!credentials?.email || !credentials?.password) return null
 
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          })
+          // Перевірка на пусті поля
+          if (
+            !credentials?.email ||
+            !credentials?.password
+          ) return null
 
-          if (!user || !user.password) return null
+          // Пошук користувача
+          const user =
+            await prisma.user.findUnique({
 
-          const isValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          )
+              where: {
+                email:
+                  credentials.email,
+              },
+            })
 
+          // Якщо користувача нема
+          // або нема пароля
+          if (
+            !user ||
+            !user.password
+          ) return null
+
+          // Перевірка пароля
+          const isValid =
+            await bcrypt.compare(
+
+              credentials.password,
+
+              user.password
+            )
+
+          // Якщо пароль невірний
           if (!isValid) return null
 
+          // Дані користувача
           return {
+
             id: user.id,
+
             email: user.email,
+
             role: user.role,
           }
+
         } catch (e) {
-          console.error("AUTH ERROR:", e)
+
+          // Помилка авторизації
+          console.error(
+            "AUTH ERROR:",
+            e
+          )
+
           return null
         }
       },
     }),
   ],
 
-callbacks: {
-  async jwt({ token, user }) {
-    if (user) {
-      token.id = (user as any).id
-      token.email = (user as any).email
-      token.role = (user as any).role
-      token.picture = (user as any).image
-    }
+  // Callback функції
+  callbacks: {
 
-    return token
+    // JWT callback
+    async jwt({
+      token,
+      user,
+    }) {
+
+      // Якщо користувач є
+      if (user) {
+
+        // Збереження id
+        token.id =
+          (user as any).id
+
+        // Збереження email
+        token.email =
+          (user as any).email
+
+        // Збереження ролі
+        token.role =
+          (user as any).role
+
+        // Збереження фото профілю
+        token.picture =
+          (user as any).image
+      }
+
+      return token
+    },
+
+    // Session callback
+    async session({
+      session,
+      token,
+    }) {
+
+      // Якщо є user
+      if (session.user) {
+
+        // Передача id
+        session.user.id =
+          token.id as string
+
+        // Передача email
+        session.user.email =
+          token.email as string
+
+        // Передача ролі
+        ;(session.user as any).role =
+          token.role
+
+        // Передача фото профілю
+        session.user.image =
+          token.picture as string
+      }
+
+      return session
+    },
   },
 
-  async session({ session, token }) {
-    if (session.user) {
-      session.user.id = token.id as string
-      session.user.email = token.email as string
-
-      ;(session.user as any).role = token.role
-      session.user.image = token.picture as string
-    }
-
-    return session
-  },
-},
-
+  // Кастомна сторінка логіну
   pages: {
     signIn: "/login",
   },
 
-  secret: process.env.NEXTAUTH_SECRET, 
+  // Secret ключ NextAuth
+  secret:
+    process.env.NEXTAUTH_SECRET,
 }
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+// Створення handler
+const handler =
+  NextAuth(authOptions)
+
+// Export API route
+export {
+  handler as GET,
+  handler as POST,
+}

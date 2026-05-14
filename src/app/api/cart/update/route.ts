@@ -1,18 +1,47 @@
+// Отримання сесії користувача
 import { getServerSession } from "next-auth"
+
+// Налаштування NextAuth
 import { authOptions } from "@/lib/auth"
+
+// Prisma client для роботи з БД
 import { prisma } from "@/lib/prisma"
 
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
+// POST API route
+// для оновлення кількості товару у кошику
+export async function POST(
+  req: Request
+) {
 
-  if (!session?.user?.email) return Response.json(null)
+  // Отримання сесії
+  const session =
+    await getServerSession(authOptions)
 
-  const { itemId, quantity } = await req.json()
+  // Якщо користувач не авторизований
+  if (!session?.user?.email)
+    return Response.json(null)
 
+  // Отримання itemId та quantity
+  const {
+    itemId,
+    quantity,
+  } = await req.json()
+
+  // Оновлення кількості товару
   await prisma.cartItem.update({
-    where: { id: itemId },
-    data: { quantity },
+
+    where: {
+      id: itemId,
+    },
+
+    data: {
+      quantity,
+    },
   })
 
-  return Response.json({ ok: true })
+  // Повернення успішної відповіді
+  return Response.json({
+
+    ok: true,
+  })
 }

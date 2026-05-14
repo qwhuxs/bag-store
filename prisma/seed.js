@@ -1,27 +1,24 @@
 import pkg from "@prisma/client"
 const { PrismaClient } = pkg
 
+// Підключення Prisma ORM
 const prisma = new PrismaClient()
 
+// Масиви зображень для кожної категорії
 const categoryImages = {
   "Рюкзаки": Array.from({ length: 14 }, (_, i) => `/images/foto${i + 1}.jpg`),
-  "Сумки через плече": Array.from({ length: 14 }, (_, i) => `/images/foto${i + 15}.jpg`),
-  "Клатчі": Array.from({ length: 11 }, (_, i) => `/images/foto${i + 29}.jpg`),
-  "Сумки-тоут": Array.from({ length: 10 }, (_, i) => `/images/foto${i + 40}.jpg`),
-  "Спортивні сумки": Array.from({ length: 9 }, (_, i) => `/images/foto${i + 50}.jpg`),
-  "Сумки на пояс": Array.from({ length: 10 }, (_, i) => `/images/foto${i + 59}.jpg`),
-  "Сумки-хобо": Array.from({ length: 8 }, (_, i) => `/images/foto${i + 69}.jpg`),
-  "Дорожні сумки": Array.from({ length: 8 }, (_, i) => `/images/foto${i + 77}.jpg`),
-  "Еко-сумки": Array.from({ length: 8 }, (_, i) => `/images/foto${i + 85}.jpg`),
-  "Сумки ручної роботи": Array.from({ length: 7 }, (_, i) => `/images/foto${i + 93}.jpg`),
 }
 
-const adjectives = ["Стильна", "Модна", "Елегантна", "Преміум", "Класична"]
+// Прикметники для генерації назв товарів
+const adjectives = [
+  "Стильна",
+  "Модна",
+  "Елегантна",
+]
 
 async function main() {
 
-  console.log("🌱 Безпечний seed...")
-
+  // Створення категорій, якщо вони ще не існують
   for (const name of Object.keys(categoryImages)) {
     await prisma.category.upsert({
       where: { name },
@@ -30,34 +27,50 @@ async function main() {
     })
   }
 
+  // Отримання всіх категорій
   const categories = await prisma.category.findMany()
 
   for (const category of categories) {
+
+    // Перевірка, чи є вже товари у категорії
     const existingCount = await prisma.product.count({
       where: { categoryId: category.id },
     })
 
+    // Якщо товари існують — пропускаємо
     if (existingCount > 0) continue
 
     const imgs = categoryImages[category.name]
 
+    // Генерація тестових товарів
     for (let i = 0; i < 12; i++) {
       await prisma.product.create({
         data: {
+
+          // Випадкова назва товару
           name: `${adjectives[Math.floor(Math.random() * adjectives.length)]} ${category.name}`,
+
           description: "Якісна стильна сумка",
+
+          // Випадкова ціна
           price: 800 + Math.floor(Math.random() * 4000),
+
           image: imgs[i % imgs.length],
+
+          // Зв'язок з категорією
           categoryId: category.id,
+
+          // Кількість товару на складі
           stock: Math.floor(Math.random() * 10),
 
+          // Випадкова знижка
           discount: Math.random() > 0.6 ? 10 : null,
         },
       })
     }
   }
 
-  console.log("✅ Seed безпечний — дані НЕ видалені")
+  console.log("✅ Seed завершено")
 }
 
 main()

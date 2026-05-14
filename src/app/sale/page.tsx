@@ -1,10 +1,17 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+
+// Компонент Next.js для оптимізації зображень
 import Image from "next/image"
 
 export default async function SalePage() {
+
+  // Отримання товарів зі знижкою
   const products = await prisma.product.findMany({
     where: {
+
+      // Вибір товарів,
+      // у яких є знижка
       discount: {
         not: null,
       },
@@ -14,6 +21,7 @@ export default async function SalePage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
 
+      {/* Заголовок сторінки */}
       <h1
         className="
           text-3xl md:text-5xl
@@ -26,6 +34,7 @@ export default async function SalePage() {
         💰 Знижки
       </h1>
 
+      {/* Сітка товарів */}
       <div
         className="
           grid
@@ -35,7 +44,10 @@ export default async function SalePage() {
         "
       >
 
+        {/* Виведення товарів */}
         {products.map((p) => {
+
+          // Обчислення нової ціни
           const newPrice = Math.round(
             p.price * (1 - p.discount! / 100)
           )
@@ -43,6 +55,7 @@ export default async function SalePage() {
           return (
             <div
               key={p.id}
+
               className="
                 bg-white
                 rounded-3xl
@@ -55,15 +68,26 @@ export default async function SalePage() {
               "
             >
 
-              {/* IMAGE */}
+              {/* Блок зображення */}
+              <div
+                className="
+                  relative
+                  h-52 w-full
+                  overflow-hidden
+                "
+              >
 
-              <div className="relative h-52 w-full overflow-hidden">
-
+                {/* Оптимізоване зображення */}
                 <Image
                   src={p.image}
                   alt={p.name}
                   fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
+
+                  sizes="
+                    (max-width: 768px) 50vw,
+                    25vw
+                  "
+
                   className="
                     object-cover
                     group-hover:scale-110
@@ -71,8 +95,7 @@ export default async function SalePage() {
                   "
                 />
 
-                {/* BADGE */}
-
+                {/* Badge зі знижкою */}
                 {p.discount && (
                   <span
                     className="
@@ -92,10 +115,10 @@ export default async function SalePage() {
 
               </div>
 
-              {/* CONTENT */}
-
+              {/* Контент картки */}
               <div className="p-4 flex flex-col flex-1">
 
+                {/* Назва товару */}
                 <h2
                   className="
                     font-bold
@@ -108,6 +131,7 @@ export default async function SalePage() {
                   {p.name}
                 </h2>
 
+                {/* Стара ціна */}
                 <p
                   className="
                     line-through
@@ -119,6 +143,7 @@ export default async function SalePage() {
                   {p.price} грн
                 </p>
 
+                {/* Нова ціна */}
                 <p
                   className="
                     text-red-500
@@ -129,8 +154,10 @@ export default async function SalePage() {
                   {newPrice} грн
                 </p>
 
+                {/* Кнопка переходу */}
                 <Link
                   href={`/product/${p.id}`}
+
                   className="
                     mt-4
                     text-center

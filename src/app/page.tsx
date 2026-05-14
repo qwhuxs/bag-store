@@ -1,16 +1,30 @@
 import { prisma } from "@/lib/prisma"
+
+// Компонент для переходів між сторінками
 import Link from "next/link"
+
+// Слайдер рекомендованих товарів
 import ProductSlider from "@/components/ProductSlider"
+
+// Компонент Next.js для оптимізації зображень
 import Image from "next/image" 
 
 export default async function HomePage() {
+
+  // Отримання товарів із бази даних
   const products = await prisma.product.findMany({
+
+    // Максимальна кількість товарів
     take: 20,
   })
 
-  const shuffled = products.sort(() => 0.5 - Math.random())
+  // Перемішування товарів у випадковому порядку
+  const shuffled =
+    products.sort(() => 0.5 - Math.random())
 
+  // Формування масиву для слайдера
   const sliderProducts = shuffled.map((p) => ({
+
     id: p.id,
     name: p.name,
     price: p.price,
@@ -20,139 +34,301 @@ export default async function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
 
-      {/* 🔥 HERO */}
-      <div className="
-        rounded-2xl
-        bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0]
-        p-12 text-center text-white mb-14 shadow-lg
-      ">
+      {/* HERO секція */}
+      <div
+        className="
+          rounded-2xl
+          bg-gradient-to-r
+          from-[#3F5F56]
+          to-[#D9A5A0]
+          p-12
+          text-center
+          text-white
+          mb-14
+          shadow-lg
+        "
+      >
+
+        {/* Заголовок */}
         <h1 className="text-4xl font-bold mb-4">
-          Стильні сумки, рюкзаки та аксесуари від Euphoria
+
+          Стильні сумки,
+          рюкзаки та аксесуари
+          від Euphoria
+
         </h1>
 
+        {/* Опис */}
         <p className="mb-6 text-lg opacity-90">
-          Знайди ідеальний аксесуар для будь-якого випадку
+
+          Знайди ідеальний аксесуар
+          для будь-якого випадку
+
         </p>
 
+        {/* Кнопка переходу в каталог */}
         <Link
           href="/catalog"
+
+          // Accessibility
           aria-label="Перейти до каталогу сумок" 
+
           className="
-            bg-white text-black px-6 py-3 rounded-lg
-            font-medium hover:scale-105 transition
+            bg-white
+            text-black
+            px-6 py-3
+            rounded-lg
+            font-medium
+            hover:scale-105
+            transition
           "
         >
           Перейти до каталогу
         </Link>
+
       </div>
 
-      {/* 💰 SALE БАНЕР */}
-      <div className="
-        mb-16 relative overflow-hidden
-        rounded-2xl shadow-xl
-        bg-gradient-to-r from-red-500 via-pink-500 to-orange-400
-        p-10 text-white
-      ">
+      {/* Банер зі знижками */}
+      <div
+        className="
+          mb-16
+          relative
+          overflow-hidden
+          rounded-2xl
+          shadow-xl
+          bg-gradient-to-r
+          from-red-500
+          via-pink-500
+          to-orange-400
+          p-10
+          text-white
+        "
+      >
+
+        {/* Контент банера */}
         <div className="relative z-10 max-w-xl">
+
           <h2 className="text-4xl font-extrabold mb-3">
-            🔥 Знижки до -10% на популярні сумки
+
+            🔥 Знижки до -10%
+            на популярні сумки
+
           </h2>
 
           <p className="mb-5 text-lg opacity-90">
-            Знижки на популярні моделі вже тут. Не пропусти!
+
+            Знижки на популярні моделі
+            вже тут. Не пропусти!
+
           </p>
 
+          {/* Кнопка переходу на сторінку знижок */}
           <Link
             href="/sale"
+
             className="
               inline-block
-              bg-white text-black px-6 py-3 rounded-lg
-              font-semibold hover:scale-105 transition
+              bg-white
+              text-black
+              px-6 py-3
+              rounded-lg
+              font-semibold
+              hover:scale-105
+              transition
             "
           >
             Дивитись знижки
           </Link>
+
         </div>
 
-        <div className="
-          absolute -right-20 -top-20
-          w-72 h-72 bg-white/10 rounded-full blur-3xl
-        " />
+        {/* Декоративний blur */}
+        <div
+          className="
+            absolute
+            -right-20 -top-20
+            w-72 h-72
+            bg-white/10
+            rounded-full
+            blur-3xl
+          "
+        />
 
-        <div className="
-          absolute right-10 bottom-0
-          text-8xl font-black opacity-10
-        ">
+        {/* Декоративний SALE текст */}
+        <div
+          className="
+            absolute
+            right-10 bottom-0
+            text-8xl
+            font-black
+            opacity-10
+          "
+        >
           SALE
         </div>
+
       </div>
 
-      {/* 🛍️ РЕКОМЕНДОВАНІ */}
+      {/* Блок рекомендованих товарів */}
       <div className="flex justify-center mb-10">
-        <div className="p-[2px] bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] rounded-xl">
+
+        <div
+          className="
+            p-[2px]
+            bg-gradient-to-r
+            from-[#3F5F56]
+            to-[#D9A5A0]
+            rounded-xl
+          "
+        >
+
           <div className="bg-white px-10 py-4 rounded-xl">
-            <h2 className="text-2xl font-semibold text-center tracking-wide">
+
+            <h2
+              className="
+                text-2xl
+                font-semibold
+                text-center
+                tracking-wide
+              "
+            >
               Рекомендовані товари
             </h2>
+
           </div>
+
         </div>
+
       </div>
 
+      {/* Слайдер товарів */}
       <ProductSlider products={sliderProducts} />
 
-      {/* 🎯 КАТЕГОРІЇ */}
+      {/* Блок категорій */}
       <div className="flex justify-center mt-16 mb-10">
-        <div className="p-[2px] bg-gradient-to-r from-[#3F5F56] to-[#D9A5A0] rounded-xl">
+
+        <div
+          className="
+            p-[2px]
+            bg-gradient-to-r
+            from-[#3F5F56]
+            to-[#D9A5A0]
+            rounded-xl
+          "
+        >
+
           <div className="bg-white px-10 py-4 rounded-xl">
-            <h2 className="text-2xl font-semibold text-center tracking-wide">
+
+            <h2
+              className="
+                text-2xl
+                font-semibold
+                text-center
+                tracking-wide
+              "
+            >
               Категорії
             </h2>
+
           </div>
+
         </div>
+
       </div>
 
+      {/* Горизонтальний список категорій */}
       <div className="overflow-x-auto pb-4">
+
         <div className="flex gap-6 w-max">
 
+          {/* Масив категорій */}
           {[
-            { name: "Рюкзаки", img: "/images/foto1.jpg" },
-            { name: "Сумки через плече", img: "/images/foto20.jpg" },
-            { name: "Клатчі", img: "/images/foto30.jpg" },
-            { name: "Сумки-тоут", img: "/images/foto40.jpg" },
-            { name: "Спортивні сумки", img: "/images/foto50.jpg" },
+            {
+              name: "Рюкзаки",
+              img: "/images/foto1.jpg",
+            },
+
+            {
+              name: "Сумки через плече",
+              img: "/images/foto20.jpg",
+            },
+
+            {
+              name: "Клатчі",
+              img: "/images/foto30.jpg",
+            },
+
+            {
+              name: "Сумки-тоут",
+              img: "/images/foto40.jpg",
+            },
+
+            {
+              name: "Спортивні сумки",
+              img: "/images/foto50.jpg",
+            },
           ].map((cat) => (
+
             <Link
               key={cat.name}
+
+              // Перехід у категорію
               href={`/categories/${encodeURIComponent(cat.name)}`}
+
               className="
-                relative min-w-[260px] h-40
-                rounded-xl overflow-hidden group
-                shadow-md hover:shadow-xl transition
+                relative
+                min-w-[260px]
+                h-40
+                rounded-xl
+                overflow-hidden
+                group
+                shadow-md
+                hover:shadow-xl
+                transition
               "
             >
 
-              {/* ✅ ЗАМІНЕНО IMG */}
+              {/* Зображення категорії */}
               <Image
                 src={cat.img}
                 alt={cat.name}
                 fill
-                sizes="(max-width: 768px) 100vw, 260px"
+
+                sizes="
+                  (max-width: 768px) 100vw,
+                  260px
+                "
+
                 className="
-                  absolute object-cover
-                  group-hover:scale-110 transition duration-500
+                  absolute
+                  object-cover
+                  group-hover:scale-110
+                  transition duration-500
                 "
               />
 
-              <div className="
-                absolute inset-0 bg-black/40
-                flex items-center justify-center
-              ">
-                <span className="
-                  text-white text-lg font-semibold
-                  group-hover:scale-110 transition
-                ">
+              {/* Overlay */}
+              <div
+                className="
+                  absolute inset-0
+                  bg-black/40
+                  flex items-center justify-center
+                "
+              >
+
+                {/* Назва категорії */}
+                <span
+                  className="
+                    text-white
+                    text-lg
+                    font-semibold
+                    group-hover:scale-110
+                    transition
+                  "
+                >
                   {cat.name}
                 </span>
+
               </div>
 
             </Link>

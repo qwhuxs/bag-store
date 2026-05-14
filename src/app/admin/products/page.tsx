@@ -1,23 +1,34 @@
 import { prisma } from "@/lib/prisma"
+
+// Функція перевірки адміністратора
 import { requireAdmin } from "@/lib/isAdmin"
+
 import DeleteButton from "./DeleteButton"
+
 import Link from "next/link"
+
+// Компонент Next.js для оптимізованих зображень
 import Image from "next/image"
 
 export default async function AdminProducts() {
+
+  // Перевірка прав адміністратора
   const admin = await requireAdmin()
 
+  // Якщо користувач не адмін — сторінка не відображається
   if (!admin) return null
 
+  // Отримання всіх товарів із бази даних
   const products = await prisma.product.findMany({
+
+    // Сортування від нових до старих
     orderBy: { id: "desc" },
   })
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-6 py-8">
 
-      {/* 🔝 HEADER */}
-
+      {/* Заголовок сторінки */}
       <div
         className="
           flex flex-col md:flex-row
@@ -40,6 +51,7 @@ export default async function AdminProducts() {
             📦 Товари
           </h1>
 
+          {/* Декоративна лінія */}
           <div
             className="
               w-24 h-1.5
@@ -52,8 +64,10 @@ export default async function AdminProducts() {
 
         </div>
 
+        {/* Кнопка переходу на створення товару */}
         <Link
           href="/admin/products/create"
+
           className="
             bg-gradient-to-r
             from-green-500
@@ -73,13 +87,13 @@ export default async function AdminProducts() {
 
       </div>
 
-      {/* 📦 PRODUCTS */}
-
+      {/* Список товарів */}
       <div className="flex flex-col gap-6">
 
         {products.map((p) => (
           <div
             key={p.id}
+
             className="
               bg-white
               rounded-3xl
@@ -99,8 +113,7 @@ export default async function AdminProducts() {
               "
             >
 
-              {/* 🖼 IMAGE */}
-
+              {/* Зображення товару */}
               <div
                 className="
                   relative
@@ -113,6 +126,7 @@ export default async function AdminProducts() {
                 "
               >
 
+                {/* Next/Image оптимізує завантаження фото */}
                 <Image
                   src={p.image}
                   alt={p.name}
@@ -123,8 +137,7 @@ export default async function AdminProducts() {
 
               </div>
 
-              {/* 📄 INFO */}
-
+              {/* Інформація про товар */}
               <div className="flex-1">
 
                 <h2
@@ -138,6 +151,7 @@ export default async function AdminProducts() {
                   {p.name}
                 </h2>
 
+                {/* Ціна товару */}
                 <p
                   className="
                     text-[#D9A5A0]
@@ -148,14 +162,14 @@ export default async function AdminProducts() {
                   {p.price} грн
                 </p>
 
+                {/* Кількість товару на складі */}
                 <p className="text-gray-500 mt-2">
                   Stock: {p.stock}
                 </p>
 
               </div>
 
-              {/* ⚙️ ACTIONS */}
-
+              {/* Кнопки керування */}
               <div
                 className="
                   flex flex-col sm:flex-row
@@ -164,8 +178,10 @@ export default async function AdminProducts() {
                 "
               >
 
+                {/* Перехід до редагування товару */}
                 <Link
                   href={`/admin/products/edit/${p.id}`}
+
                   className="
                     px-5 py-3
                     bg-blue-500
@@ -180,6 +196,7 @@ export default async function AdminProducts() {
                   Редагувати
                 </Link>
 
+                {/* Кнопка видалення */}
                 <DeleteButton id={p.id} />
 
               </div>

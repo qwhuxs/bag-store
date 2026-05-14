@@ -1,5 +1,6 @@
 "use client"
 
+// Провайдер NextAuth для роботи із сесіями
 import { SessionProvider } from "next-auth/react"
 
 export default function Providers({
@@ -7,12 +8,24 @@ export default function Providers({
 }: {
   children: React.ReactNode
 }) {
+
   return (
+
+    // SessionProvider надає доступ
+    // до даних авторизації
     <SessionProvider
-      refetchOnWindowFocus={true}   
-      refetchInterval={0}           
+
+      // Оновлення сесії при поверненні у вкладку
+      refetchOnWindowFocus={true}
+
+      // Інтервал автоматичного оновлення
+      // 0 = вимкнено
+      refetchInterval={0}
     >
+
+      {/* Вкладені компоненти */}
       {children}
+
     </SessionProvider>
   )
 }

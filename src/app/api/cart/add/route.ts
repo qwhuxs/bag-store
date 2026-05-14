@@ -1,83 +1,191 @@
+// Отримання сесії користувача
 import { getServerSession } from "next-auth"
+
+// Налаштування NextAuth
 import { authOptions } from "@/lib/auth"
+
+// Prisma client для роботи з БД
 import { prisma } from "@/lib/prisma"
 
-export async function POST(req: Request) {
+// POST API route
+// для додавання товару у кошик
+export async function POST(
+  req: Request
+) {
+
   try {
-    const session = await getServerSession(authOptions)
 
+    // Отримання сесії
+    const session =
+      await getServerSession(authOptions)
+
+    // Якщо користувач не авторизований
     if (!session?.user?.email) {
+
       return Response.json(
-        { error: "NOT_AUTHORIZED" },
-        { status: 401 }
+
+        {
+          error:
+            "NOT_AUTHORIZED",
+        },
+
+        {
+          status: 401,
+        }
       )
     }
 
-    const { productId } = await req.json()
+    // Отримання productId
+    const { productId } =
+      await req.json()
 
+    // Якщо productId немає
     if (!productId) {
+
       return Response.json(
-        { error: "NO_PRODUCT_ID" },
-        { status: 400 }
+
+        {
+          error:
+            "NO_PRODUCT_ID",
+        },
+
+        {
+          status: 400,
+        }
       )
     }
 
-    let user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: { cart: true },
-    })
+    // Пошук користувача
+    let user =
+      await prisma.user.findUnique({
 
+        where: {
+          email:
+            session.user.email,
+        },
+
+        include: {
+          cart: true,
+        },
+      })
+
+    // Якщо користувача немає
     if (!user) {
+
       return Response.json(
-        { error: "USER_NOT_FOUND" },
-        { status: 404 }
+
+        {
+          error:
+            "USER_NOT_FOUND",
+        },
+
+        {
+          status: 404,
+        }
       )
     }
 
+    // Якщо кошика немає — створюємо
     if (!user.cart) {
-      user = await prisma.user.update({
-        where: { email: session.user.email },
-        data: {
-          cart: { create: {} },
-        },
-        include: { cart: true },
-      })
+
+      user =
+        await prisma.user.update({
+
+          where: {
+            email:
+              session.user.email,
+          },
+
+          data: {
+
+            cart: {
+              create: {},
+            },
+          },
+
+          include: {
+            cart: true,
+          },
+        })
     }
 
-    const existing = await prisma.cartItem.findUnique({
-      where: {
-        cartId_productId: {
-          cartId: user.cart!.id,
-          productId,
-        },
-      },
-    })
+    // Перевірка,
+    // чи товар вже є у кошику
+    const existing =
+      await prisma.cartItem.findUnique({
 
-    if (existing) {
-      await prisma.cartItem.update({
-        where: { id: existing.id },
-        data: {
-          quantity: { increment: 1 },
+        where: {
+
+          cartId_productId: {
+
+            cartId:
+              user.cart!.id,
+
+            productId,
+          },
         },
       })
-    } else {
-      await prisma.cartItem.create({
+
+    // Якщо товар вже існує
+    if (existing) {
+
+      // Збільшення кількості
+      await prisma.cartItem.update({
+
+        where: {
+          id: existing.id,
+        },
+
         data: {
-          cartId: user.cart!.id,
+
+          quantity: {
+            increment: 1,
+          },
+        },
+      })
+
+    } else {
+
+      // Якщо товару немає — створення нового item
+      await prisma.cartItem.create({
+
+        data: {
+
+          cartId:
+            user.cart!.id,
+
           productId,
+
           quantity: 1,
         },
       })
     }
 
-    return Response.json({ ok: true })
+    // Успішна відповідь
+    return Response.json({
+
+      ok: true,
+    })
 
   } catch (error) {
-    console.error("CART ERROR:", error)
 
+    // Виведення помилки
+    console.error(
+      "CART ERROR:",
+      error
+    )
+
+    // Server error
     return Response.json(
-      { error: "SERVER_ERROR" },
-      { status: 500 }
+
+      {
+        error:
+          "SERVER_ERROR",
+      },
+
+      {
+        status: 500,
+      }
     )
   }
 }

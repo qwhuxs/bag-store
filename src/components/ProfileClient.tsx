@@ -1,91 +1,145 @@
 "use client"
 
+// useState для керування станом
 import { useState } from "react"
+
+// useRouter для оновлення сторінки
 import { useRouter } from "next/navigation"
+
+// Toast повідомлення
 import toast from "react-hot-toast"
+
+// Компонент Next.js для оптимізації зображень
 import Image from "next/image"
 
 export default function ProfileClient({
   user,
 }: any) {
 
+  // Router Next.js
   const router = useRouter()
 
+  // Стан режиму редагування
   const [isEditing, setIsEditing] =
     useState(false)
 
+  // Стан аватара
   const [avatar, setAvatar] =
     useState(user.image || "")
 
+  // Стан форми
   const [form, setForm] = useState({
-    firstName: user.firstName || "",
-    lastName: user.lastName || "",
-    age: user.age || "",
-    city: user.city || "",
-    phone: user.phone || "",
-    image: user.image || "",
+
+    firstName:
+      user.firstName || "",
+
+    lastName:
+      user.lastName || "",
+
+    age:
+      user.age || "",
+
+    city:
+      user.city || "",
+
+    phone:
+      user.phone || "",
+
+    image:
+      user.image || "",
   })
 
+  // Оновлення значень input
   const handleChange = (e: any) => {
+
     setForm({
+
       ...form,
-      [e.target.name]: e.target.value,
+
+      [e.target.name]:
+        e.target.value,
     })
   }
 
+  // Завантаження фото профілю
   const handleImageUpload = (
     e: any
   ) => {
 
-    const file = e.target.files?.[0]
+    // Отримання файлу
+    const file =
+      e.target.files?.[0]
 
     if (!file) return
 
-    const reader = new FileReader()
+    // FileReader для конвертації фото
+    const reader =
+      new FileReader()
 
     reader.onloadend = () => {
 
-      setAvatar(reader.result as string)
+      // Збереження фото
+      setAvatar(
+        reader.result as string
+      )
 
+      // Додавання фото у form
       setForm({
+
         ...form,
-        image: reader.result,
+
+        image:
+          reader.result,
       })
     }
 
+    // Читання файлу
     reader.readAsDataURL(file)
   }
 
+  // Збереження змін профілю
   const handleSave = async () => {
 
+    // PUT-запит до API
     const res = await fetch(
       "/api/profile",
       {
+
         method: "PUT",
+
         headers: {
           "Content-Type":
             "application/json",
         },
+
+        // Передача даних форми
         body: JSON.stringify(form),
       }
     )
 
+    // Якщо все успішно
     if (res.ok) {
 
       toast.success(
         "Профіль оновлено ✅"
       )
 
+      // Вихід з режиму редагування
       setIsEditing(false)
 
+      // Оновлення сторінки
       router.refresh()
 
     } else {
+
+      // Помилка
       toast.error("Помилка ❌")
     }
   }
 
   return (
+
+    // Контейнер сторінки
     <div
       className="
         max-w-6xl mx-auto
@@ -93,6 +147,7 @@ export default function ProfileClient({
       "
     >
 
+      {/* Карточка профілю */}
       <div
         className="
           bg-white
@@ -102,8 +157,7 @@ export default function ProfileClient({
         "
       >
 
-        {/* HEADER */}
-
+        {/* Header */}
         <div
           className="
             flex flex-col md:flex-row
@@ -114,6 +168,7 @@ export default function ProfileClient({
           "
         >
 
+          {/* Ліва частина */}
           <div
             className="
               flex flex-col md:flex-row
@@ -122,8 +177,7 @@ export default function ProfileClient({
             "
           >
 
-            {/* AVATAR */}
-
+            {/* Аватар */}
             <div
               className="
                 relative
@@ -140,13 +194,17 @@ export default function ProfileClient({
                   avatar ||
                   "/images/default-avatar.png"
                 }
+
                 alt="avatar"
+
                 fill
+
                 className="object-cover"
               />
 
             </div>
 
+            {/* Заголовок */}
             <h1
               className="
                 text-4xl md:text-5xl
@@ -160,11 +218,14 @@ export default function ProfileClient({
 
           </div>
 
+          {/* Кнопка редагування */}
           {!isEditing && (
+
             <button
               onClick={() =>
                 setIsEditing(true)
               }
+
               className="
                 border
                 px-6 py-3
@@ -180,6 +241,7 @@ export default function ProfileClient({
 
         </div>
 
+        {/* Режим перегляду */}
         {!isEditing ? (
 
           <div
@@ -192,13 +254,16 @@ export default function ProfileClient({
             "
           >
 
+            {/* Ліва колонка */}
             <div className="space-y-4">
 
               <p>
                 <span className="font-bold">
                   Email:
                 </span>
+
                 {" "}
+
                 {user.email}
               </p>
 
@@ -206,7 +271,9 @@ export default function ProfileClient({
                 <span className="font-bold">
                   Ім’я:
                 </span>
+
                 {" "}
+
                 {user.firstName || "-"}
               </p>
 
@@ -214,19 +281,24 @@ export default function ProfileClient({
                 <span className="font-bold">
                   Прізвище:
                 </span>
+
                 {" "}
+
                 {user.lastName || "-"}
               </p>
 
             </div>
 
+            {/* Права колонка */}
             <div className="space-y-4">
 
               <p>
                 <span className="font-bold">
                   Вік:
                 </span>
+
                 {" "}
+
                 {user.age || "-"}
               </p>
 
@@ -234,7 +306,9 @@ export default function ProfileClient({
                 <span className="font-bold">
                   Місто:
                 </span>
+
                 {" "}
+
                 {user.city || "-"}
               </p>
 
@@ -242,7 +316,9 @@ export default function ProfileClient({
                 <span className="font-bold">
                   Телефон:
                 </span>
+
                 {" "}
+
                 {user.phone || "-"}
               </p>
 
@@ -252,9 +328,10 @@ export default function ProfileClient({
 
         ) : (
 
+          // Режим редагування
           <>
-            {/* FORM */}
 
+            {/* Форма */}
             <div
               className="
                 grid
@@ -264,6 +341,7 @@ export default function ProfileClient({
               "
             >
 
+              {/* Ім’я */}
               <input
                 name="firstName"
                 value={form.firstName}
@@ -272,6 +350,7 @@ export default function ProfileClient({
                 className="input"
               />
 
+              {/* Прізвище */}
               <input
                 name="lastName"
                 value={form.lastName}
@@ -280,6 +359,7 @@ export default function ProfileClient({
                 className="input"
               />
 
+              {/* Вік */}
               <input
                 name="age"
                 value={form.age}
@@ -288,6 +368,7 @@ export default function ProfileClient({
                 className="input"
               />
 
+              {/* Місто */}
               <input
                 name="city"
                 value={form.city}
@@ -296,6 +377,7 @@ export default function ProfileClient({
                 className="input"
               />
 
+              {/* Телефон */}
               <input
                 name="phone"
                 value={form.phone}
@@ -304,9 +386,12 @@ export default function ProfileClient({
                 className="input"
               />
 
+              {/* Email */}
               <input
                 value={user.email}
+
                 disabled
+
                 className="
                   input
                   bg-gray-100
@@ -315,25 +400,28 @@ export default function ProfileClient({
 
             </div>
 
-            {/* IMAGE */}
-
+            {/* Завантаження фото */}
             <div className="mt-6">
 
               <p className="font-semibold mb-3">
+
                 Фото профілю
+
               </p>
 
               <input
                 type="file"
+
                 accept="image/*"
+
                 onChange={handleImageUpload}
+
                 className="w-full"
               />
 
             </div>
 
-            {/* BUTTONS */}
-
+            {/* Кнопки */}
             <div
               className="
                 flex flex-col md:flex-row
@@ -342,8 +430,10 @@ export default function ProfileClient({
               "
             >
 
+              {/* Зберегти */}
               <button
                 onClick={handleSave}
+
                 className="
                   flex-1
                   bg-gradient-to-r
@@ -360,10 +450,12 @@ export default function ProfileClient({
                 Зберегти
               </button>
 
+              {/* Скасувати */}
               <button
                 onClick={() =>
                   setIsEditing(false)
                 }
+
                 className="
                   flex-1
                   border

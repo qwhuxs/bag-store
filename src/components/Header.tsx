@@ -1,21 +1,37 @@
 "use client"
 
+// Компонент для навігації між сторінками
 import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+
+// useSession для отримання даних авторизації
+// signOut для виходу з акаунта
+import {
+  useSession,
+  signOut,
+} from "next-auth/react"
+
+// useState для керування станом меню
 import { useState } from "react"
 
 export default function Header() {
+
+  // Отримання сесії користувача
   const { data: session } = useSession()
 
+  // Стан відкриття адмін-меню
   const [adminOpen, setAdminOpen] =
     useState(false)
 
+  // Перевірка,
+  // чи користувач є адміністратором
   const isAdmin =
     session?.user &&
     "role" in session.user &&
     session.user.role === "ADMIN"
 
   return (
+
+    // Header сайту
     <header
       className="
         bg-white
@@ -25,6 +41,7 @@ export default function Header() {
       "
     >
 
+      {/* Контейнер */}
       <div
         className="
           max-w-7xl mx-auto
@@ -32,12 +49,13 @@ export default function Header() {
         "
       >
 
-        {/* 👜 LOGO */}
-
+        {/* Логотип */}
         <Link
           href="/"
+
           className="
-            text-3xl font-black
+            text-3xl
+            font-black
             tracking-tight
             bg-gradient-to-r
             from-[#3F5F56]
@@ -49,10 +67,16 @@ export default function Header() {
           Euphoria Bags
         </Link>
 
-        {/* 🔗 NAVIGATION */}
+        {/* Навігація */}
+        <nav
+          className="
+            flex items-center
+            gap-8
+            text-[17px]
+          "
+        >
 
-        <nav className="flex items-center gap-8 text-[17px]">
-
+          {/* Головна */}
           <Link
             href="/"
             className="hover:text-[#3F5F56] transition"
@@ -60,6 +84,7 @@ export default function Header() {
             Головна
           </Link>
 
+          {/* Каталог */}
           <Link
             href="/catalog"
             className="hover:text-[#3F5F56] transition"
@@ -67,6 +92,7 @@ export default function Header() {
             Товари
           </Link>
 
+          {/* Категорії */}
           <Link
             href="/categories"
             className="hover:text-[#3F5F56] transition"
@@ -74,6 +100,7 @@ export default function Header() {
             Категорії
           </Link>
 
+          {/* Хіти продажу */}
           <Link
             href="/hits"
             className="hover:text-[#3F5F56] transition"
@@ -81,6 +108,7 @@ export default function Header() {
             🔥 Хіти
           </Link>
 
+          {/* Знижки */}
           <Link
             href="/sale"
             className="hover:text-[#3F5F56] transition"
@@ -88,15 +116,17 @@ export default function Header() {
             💰 Знижки
           </Link>
 
-         {/* 👑 ADMIN MENU */}
-
+         {/* Адмін-меню */}
 {isAdmin && (
+
   <div className="relative">
 
+    {/* Кнопка відкриття меню */}
     <button
       onClick={() =>
         setAdminOpen(!adminOpen)
       }
+
       className="
         flex items-center gap-2
         font-semibold
@@ -105,8 +135,10 @@ export default function Header() {
         transition
       "
     >
+
       ⚙️ Управління
 
+      {/* Іконка стрілки */}
       <span
         className={`
           transition duration-300
@@ -115,9 +147,12 @@ export default function Header() {
       >
         ▼
       </span>
+
     </button>
 
+    {/* Dropdown меню */}
     {adminOpen && (
+
       <div
         className="
           absolute right-0 mt-4
@@ -133,8 +168,10 @@ export default function Header() {
 
         <div className="p-2">
 
+          {/* Управління товарами */}
           <Link
             href="/admin/products"
+
             className="
               flex items-center gap-3
               px-4 py-3
@@ -146,8 +183,10 @@ export default function Header() {
             📦 Товари
           </Link>
 
+          {/* Управління замовленнями */}
           <Link
             href="/admin/orders"
+
             className="
               flex items-center gap-3
               px-4 py-3
@@ -159,8 +198,10 @@ export default function Header() {
             🧾 Замовлення
           </Link>
 
+          {/* Управління категоріями */}
           <Link
             href="/admin/categories"
+
             className="
               flex items-center gap-3
               px-4 py-3
@@ -180,12 +221,15 @@ export default function Header() {
   </div>
 )}
 
-          {/* 🛒 USER */}
-
+          {/* Блок користувача */}
           {session ? (
+
             <>
+
+              {/* Кошик */}
               <Link
                 href="/cart"
+
                 className="
                   hover:text-[#3F5F56]
                   transition
@@ -194,8 +238,10 @@ export default function Header() {
                 🛒 Кошик
               </Link>
 
+              {/* Профіль */}
               <Link
                 href="/profile"
+
                 className="
                   hover:text-[#3F5F56]
                   transition
@@ -204,12 +250,17 @@ export default function Header() {
                 👤 Профіль
               </Link>
 
+              {/* Email користувача */}
               <span className="text-gray-500 text-sm">
+
                 {session.user?.email}
+
               </span>
 
+              {/* Кнопка виходу */}
               <button
                 onClick={() => signOut()}
+
                 className="
                   text-red-500
                   hover:text-red-700
@@ -219,12 +270,18 @@ export default function Header() {
               >
                 Вийти
               </button>
+
             </>
+
           ) : (
+
+            // Якщо користувач не авторизований
             <div className="flex gap-3">
 
+              {/* Вхід */}
               <Link
                 href="/login"
+
                 className="
                   hover:text-[#3F5F56]
                   transition
@@ -233,8 +290,10 @@ export default function Header() {
                 Увійти
               </Link>
 
+              {/* Реєстрація */}
               <Link
                 href="/register"
+
                 className="
                   bg-[#D9A5A0]
                   text-white
