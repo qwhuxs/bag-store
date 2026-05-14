@@ -72,7 +72,9 @@ callbacks: {
       token.id = (user as any).id
       token.email = (user as any).email
       token.role = (user as any).role
+      token.picture = (user as any).image
     }
+
     return token
   },
 
@@ -80,8 +82,11 @@ callbacks: {
     if (session.user) {
       session.user.id = token.id as string
       session.user.email = token.email as string
+
       ;(session.user as any).role = token.role
+      session.user.image = token.picture as string
     }
+
     return session
   },
 },
