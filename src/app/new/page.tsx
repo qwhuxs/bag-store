@@ -20,7 +20,7 @@ export default async function NewPage() {
   products = products
 
     // Random сортування
-    .sort(() => 0.5 - Math.random())
+    .sort((a, b) => a.id.localeCompare(b.id))
 
     // Вибір перших 8 товарів
     .slice(0, 8)

@@ -81,7 +81,7 @@ export default function CheckoutPage() {
       // Перехід на сторінку подяки
       window.location.href = "/thank-you"
 
-    } catch (error) {
+    } catch {
 
       // Помилка сервера
       toast.error("Помилка сервера")

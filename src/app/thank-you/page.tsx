@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export default function ThankYouPage() {
   return (
 
@@ -44,7 +46,7 @@ export default function ThankYouPage() {
         </p>
 
         {/* Кнопка повернення */}
-        <a
+        <Link
           href="/"
 
           className="
@@ -58,7 +60,7 @@ export default function ThankYouPage() {
           "
         >
           Повернутися на головну
-        </a>
+        </Link>
 
       </div>
     </div>

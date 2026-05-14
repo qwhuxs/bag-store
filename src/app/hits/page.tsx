@@ -14,13 +14,13 @@ export default async function HitsPage() {
   })
 
   // Перемішування товарів у випадковому порядку
-  products = products
+products = products
 
-    // random сортування
-    .sort(() => 0.5 - Math.random())
+  // Сортування за id
+  .sort((a, b) => a.id.localeCompare(b.id))
 
-    // Вибір перших 8 товарів
-    .slice(0, 8)
+  // Вибір перших 8 товарів
+  .slice(0, 8)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

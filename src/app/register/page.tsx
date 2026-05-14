@@ -94,7 +94,7 @@ export default function RegisterPage() {
       // Перехід у профіль
       window.location.href = "/profile"
 
-    } catch (error) {
+    } catch {
 
       // Помилка сервера
       toast.error("Помилка сервера")
