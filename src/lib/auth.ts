@@ -47,29 +47,29 @@ export const authOptions:
         process.env.GITHUB_SECRET!,
     }),
 
-// Google авторизація
-GoogleProvider({
+    // Google авторизація
+    GoogleProvider({
 
-  clientId:
-    process.env.GOOGLE_CLIENT_ID!,
+      clientId:
+        process.env.GOOGLE_CLIENT_ID!,
 
-  clientSecret:
-    process.env.GOOGLE_CLIENT_SECRET!,
+      clientSecret:
+        process.env.GOOGLE_CLIENT_SECRET!,
 
-  allowDangerousEmailAccountLinking: true,
-}),
+      allowDangerousEmailAccountLinking: true,
+    }),
 
-// Discord авторизація
-DiscordProvider({
+    // Discord авторизація
+    DiscordProvider({
 
-  clientId:
-    process.env.DISCORD_CLIENT_ID!,
+      clientId:
+        process.env.DISCORD_CLIENT_ID!,
 
-  clientSecret:
-    process.env.DISCORD_CLIENT_SECRET!,
+      clientSecret:
+        process.env.DISCORD_CLIENT_SECRET!,
 
-  allowDangerousEmailAccountLinking: true,
-}),
+      allowDangerousEmailAccountLinking: true,
+    }),
 
     // Авторизація через email + пароль
     CredentialsProvider({
@@ -151,34 +151,44 @@ DiscordProvider({
   // Callback функції
   callbacks: {
 
-    // JWT callback
-    async jwt({
-      token,
-      user,
-    }) {
+// JWT callback
+async jwt({
+  token,
+  user,
+}) {
 
-      // Якщо користувач є
-      if (user) {
+  // Якщо користувач є
+  if (user) {
 
-        // Збереження id
-        token.id =
-          (user as any).id
+    // Збереження id
+    ;(token as {
+      id?: string
+    }).id =
+      user.id
 
-        // Збереження email
-        token.email =
-          (user as any).email
+    // Збереження email
+    ;(token as {
+      email?: string
+    }).email =
+      user.email ?? ""
 
-        // Збереження ролі
-        token.role =
-          (user as any).role
+    // Збереження ролі
+    ;(token as {
+      role?: string
+    }).role =
+      (user as {
+        role?: string
+      }).role
 
-        // Збереження фото профілю
-        token.picture =
-          (user as any).image
-      }
+    // Збереження фото профілю
+    ;(token as {
+      picture?: string | null
+    }).picture =
+      user.image
+  }
 
-      return token
-    },
+  return token
+},
 
     // Session callback
     async session({
@@ -198,8 +208,12 @@ DiscordProvider({
           token.email as string
 
         // Передача ролі
-        ;(session.user as any).role =
-          token.role
+        (
+          session.user as {
+            role?: string
+          }
+        ).role =
+          token.role as string
 
         // Передача фото профілю
         session.user.image =
