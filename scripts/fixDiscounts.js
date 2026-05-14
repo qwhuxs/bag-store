@@ -1,7 +1,4 @@
-const { PrismaClient } = require("@prisma/client")
-
-// Підключення Prisma ORM для роботи з базою даних
-const prisma = new PrismaClient()
+import prisma from "@/lib/prisma"
 
 async function main() {
 
