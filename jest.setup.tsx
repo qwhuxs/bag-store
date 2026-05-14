@@ -9,13 +9,13 @@ global.fetch = jest.fn(() =>
 jest.mock("next/image", () => ({
   __esModule: true,
 
-  default: (props: any) => {
+  default: (props: unknown) => {
 
-    const {
-      fill,
-      ...rest
-    } = props
-
-    return <img {...rest} />
+    return (
+      <img
+        alt=""
+        {...(props as object)}
+      />
+    )
   },
 }))
