@@ -9,9 +9,24 @@ import { useRouter } from "next/navigation"
 // Бібліотека для toast-повідомлень
 import toast from "react-hot-toast"
 
+// Prisma типи
+import {
+  Category,
+  Product,
+} from "@prisma/client"
+
+// Тип props
+type Props = {
+  categories: (
+    Category & {
+      products: Product[]
+    }
+  )[]
+}
+
 export default function CategoriesClient({
   categories,
-}: any) {
+}: Props) {
 
   // Router для оновлення даних
   const router = useRouter()
@@ -283,7 +298,7 @@ export default function CategoriesClient({
       {/* 🔥 LIST */}
       <div className="grid gap-5">
 
-        {categories.map((cat: any) => (
+        {categories.map((cat) => (
 
           <div
             key={cat.id}
