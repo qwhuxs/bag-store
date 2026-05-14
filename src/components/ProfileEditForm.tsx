@@ -6,9 +6,20 @@ import { useState } from "react"
 // useRouter для оновлення сторінки
 import { useRouter } from "next/navigation"
 
+// Тип користувача
+type UserType = {
+  firstName?: string
+  lastName?: string
+  age?: string | number
+  city?: string
+  phone?: string
+}
+
 export default function ProfileEditForm({
   user,
-}: any) {
+}: {
+  user: UserType
+}) {
 
   // Router Next.js
   const router = useRouter()
@@ -41,7 +52,9 @@ export default function ProfileEditForm({
     useState(false)
 
   // Оновлення значень input
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
 
     setForm({
 

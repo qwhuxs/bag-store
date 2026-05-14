@@ -12,9 +12,23 @@ import toast from "react-hot-toast"
 // Компонент Next.js для оптимізації зображень
 import Image from "next/image"
 
+// Тип користувача
+type UserType = {
+  email: string
+
+  firstName?: string
+  lastName?: string
+  age?: string | number
+  city?: string
+  phone?: string
+  image?: string
+}
+
 export default function ProfileClient({
   user,
-}: any) {
+}: {
+  user: UserType
+}) {
 
   // Router Next.js
   const router = useRouter()
@@ -50,7 +64,9 @@ export default function ProfileClient({
   })
 
   // Оновлення значень input
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
 
     setForm({
 
@@ -63,7 +79,7 @@ export default function ProfileClient({
 
   // Завантаження фото профілю
   const handleImageUpload = (
-    e: any
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
 
     // Отримання файлу
@@ -89,7 +105,7 @@ export default function ProfileClient({
         ...form,
 
         image:
-          reader.result,
+          reader.result as string,
       })
     }
 
@@ -330,10 +346,7 @@ export default function ProfileClient({
 
         ) : (
 
-          // Режим редагування
           <>
-
-            {/* Форма */}
             <div
               className="
                 grid
@@ -343,7 +356,6 @@ export default function ProfileClient({
               "
             >
 
-              {/* Ім’я */}
               <input
                 name="firstName"
                 value={form.firstName}
@@ -352,7 +364,6 @@ export default function ProfileClient({
                 className="input"
               />
 
-              {/* Прізвище */}
               <input
                 name="lastName"
                 value={form.lastName}
@@ -361,7 +372,6 @@ export default function ProfileClient({
                 className="input"
               />
 
-              {/* Вік */}
               <input
                 name="age"
                 value={form.age}
@@ -370,7 +380,6 @@ export default function ProfileClient({
                 className="input"
               />
 
-              {/* Місто */}
               <input
                 name="city"
                 value={form.city}
@@ -379,7 +388,6 @@ export default function ProfileClient({
                 className="input"
               />
 
-              {/* Телефон */}
               <input
                 name="phone"
                 value={form.phone}
@@ -388,12 +396,9 @@ export default function ProfileClient({
                 className="input"
               />
 
-              {/* Email */}
               <input
                 value={user.email}
-
                 disabled
-
                 className="
                   input
                   bg-gray-100
@@ -402,28 +407,21 @@ export default function ProfileClient({
 
             </div>
 
-            {/* Завантаження фото */}
             <div className="mt-6">
 
               <p className="font-semibold mb-3">
-
                 Фото профілю
-
               </p>
 
               <input
                 type="file"
-
                 accept="image/*"
-
                 onChange={handleImageUpload}
-
                 className="w-full"
               />
 
             </div>
 
-            {/* Кнопки */}
             <div
               className="
                 flex flex-col md:flex-row
@@ -432,7 +430,6 @@ export default function ProfileClient({
               "
             >
 
-              {/* Зберегти */}
               <button
                 onClick={handleSave}
 
@@ -452,7 +449,6 @@ export default function ProfileClient({
                 Зберегти
               </button>
 
-              {/* Скасувати */}
               <button
                 onClick={() =>
                   setIsEditing(false)
