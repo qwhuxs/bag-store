@@ -25,7 +25,9 @@ export default function Navbar() {
   // Перевірка,
   // чи користувач адміністратор
   const isAdmin =
-    (session?.user as any)?.role === "ADMIN"
+  (session?.user as {
+    role?: string
+  })?.role === "ADMIN"
 
   return (
 

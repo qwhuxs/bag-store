@@ -20,7 +20,9 @@ export default async function HomePage() {
 
   // Перемішування товарів у випадковому порядку
   const shuffled =
-    products.sort(() => 0.5 - Math.random())
+    products.sort((a, b) =>
+  a.id.localeCompare(b.id)
+)
 
   // Формування масиву для слайдера
   const sliderProducts = shuffled.map((p) => ({
