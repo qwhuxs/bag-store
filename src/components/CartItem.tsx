@@ -6,7 +6,25 @@ import { useRouter } from "next/navigation"
 // useState для збереження стану
 import { useState } from "react"
 
-export default function CartItem({ item }: any) {
+// Тип товару в кошику
+type CartItemType = {
+  id: string
+  quantity: number
+
+  product: {
+    id: string
+    name: string
+    image: string
+    price: number
+    stock: number
+  }
+}
+
+export default function CartItem({
+  item,
+}: {
+  item: CartItemType
+}) {
 
   // Router Next.js
   const router = useRouter()
@@ -80,6 +98,7 @@ export default function CartItem({ item }: any) {
       {/* Фото товару */}
       <img
         src={item.product.image}
+        alt="Product"
 
         className="
           w-24 h-24

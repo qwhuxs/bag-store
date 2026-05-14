@@ -84,7 +84,7 @@ export default function AddToCartButton({
       // Оновлення сторінки
       router.refresh()
 
-    } catch (e) {
+    } catch {
 
       // Помилка сервера
       toast.error("Щось пішло не так")
