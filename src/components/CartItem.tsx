@@ -54,6 +54,11 @@ export default function CartItem({ item }: any) {
           {item.product.price} грн
         </p>
 
+        {/* 📦 Залишок */}
+        <p className="text-sm text-gray-400 mt-1">
+          На складі: {item.product.stock} шт
+        </p>
+
         {/* 🔢 КІЛЬКІСТЬ */}
         <div className="flex items-center gap-3 mt-3">
 
@@ -61,7 +66,13 @@ export default function CartItem({ item }: any) {
           <button
             onClick={() => updateQuantity(qty - 1)}
             disabled={qty <= 1}
-            className="w-8 h-8 flex items-center justify-center border rounded-lg hover:bg-gray-100 hover:scale-110 transition disabled:opacity-30"
+            className="
+              w-8 h-8 flex items-center justify-center
+              border rounded-lg
+              hover:bg-gray-100 hover:scale-110 transition
+              disabled:opacity-30
+              disabled:cursor-not-allowed
+            "
           >
             -
           </button>
@@ -72,12 +83,29 @@ export default function CartItem({ item }: any) {
 
           {/* ➕ */}
           <button
-            onClick={() => updateQuantity(qty + 1)}
-            className="w-8 h-8 flex items-center justify-center border rounded-lg hover:bg-gray-100 hover:scale-110 transition"
+            onClick={() => {
+              if (qty >= item.product.stock) return
+              updateQuantity(qty + 1)
+            }}
+            disabled={qty >= item.product.stock}
+            className="
+              w-8 h-8 flex items-center justify-center
+              border rounded-lg
+              hover:bg-gray-100 hover:scale-110 transition
+              disabled:opacity-30
+              disabled:cursor-not-allowed
+            "
           >
             +
           </button>
         </div>
+
+        {/* ❗ Повідомлення */}
+        {qty >= item.product.stock && (
+          <p className="text-red-500 text-sm mt-2">
+            На складі більше немає товару
+          </p>
+        )}
       </div>
 
       {/* 💰 СУМА */}
