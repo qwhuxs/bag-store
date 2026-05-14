@@ -9,7 +9,17 @@ import { useRouter } from "next/navigation"
 // Бібліотека для показу повідомлень
 import toast from "react-hot-toast"
 
-export default function Create({ categories }: any) {
+// Тип для категорій
+type Props = {
+  categories: {
+    id: string
+    name: string
+  }[]
+}
+
+export default function Create({
+  categories,
+}: Props) {
 
   // Router для переходу між сторінками
   const router = useRouter()
@@ -25,7 +35,13 @@ export default function Create({ categories }: any) {
   })
 
   // Функція зміни даних у form
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement |
+      HTMLTextAreaElement |
+      HTMLSelectElement
+    >
+  ) => {
 
     // Оновлюється лише поле,
     // яке зараз змінює користувач
@@ -229,7 +245,7 @@ export default function Create({ categories }: any) {
             </option>
 
             {/* Виведення категорій із бази даних */}
-            {categories.map((cat: any) => (
+            {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>

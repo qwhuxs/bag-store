@@ -9,10 +9,26 @@ import { useRouter } from "next/navigation"
 // Бібліотека для показу повідомлень
 import toast from "react-hot-toast"
 
+// Типи props компонента
+type Props = {
+  product: {
+    id: string
+    name: string
+    price: number
+    stock: number
+    categoryId: string
+  }
+
+  categories: {
+    id: string
+    name: string
+  }[]
+}
+
 export default function EditProductClient({
   product,
   categories,
-}: any) {
+}: Props) {
 
   // Router для переходу та оновлення сторінки
   const router = useRouter()
@@ -28,7 +44,11 @@ export default function EditProductClient({
   })
 
   // Функція оновлення даних форми
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement
+    >
+  ) => {
 
     setForm({
       ...form,
@@ -165,7 +185,7 @@ export default function EditProductClient({
           >
 
             {/* Виведення всіх категорій */}
-            {categories.map((cat: any) => (
+            {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
