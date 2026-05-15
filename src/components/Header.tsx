@@ -36,8 +36,9 @@ export default function Header() {
       className="
         bg-white
         shadow-md
-        px-8 py-5
+        px-4 md:px-8 py-5
         sticky top-0 z-50
+        overflow-x-hidden
       "
     >
 
@@ -46,6 +47,8 @@ export default function Header() {
         className="
           max-w-7xl mx-auto
           flex justify-between items-center
+          gap-4
+          min-w-0
         "
       >
 
@@ -54,7 +57,7 @@ export default function Header() {
           href="/"
 
           className="
-            text-3xl
+            text-2xl md:text-3xl
             font-black
             tracking-tight
             bg-gradient-to-r
@@ -62,6 +65,7 @@ export default function Header() {
             to-[#D9A5A0]
             bg-clip-text
             text-transparent
+            shrink-0
           "
         >
           Euphoria Bags
@@ -71,8 +75,11 @@ export default function Header() {
         <nav
           className="
             flex items-center
-            gap-8
-            text-[17px]
+            justify-end
+            gap-4 md:gap-5
+            text-sm md:text-[17px]
+            min-w-0
+            flex-wrap
           "
         >
 
@@ -116,110 +123,110 @@ export default function Header() {
             💰 Знижки
           </Link>
 
-         {/* Адмін-меню */}
-{isAdmin && (
+          {/* Адмін-меню */}
+          {isAdmin && (
 
-  <div className="relative">
+            <div className="relative">
 
-    {/* Кнопка відкриття меню */}
-    <button
-      onClick={() =>
-        setAdminOpen(!adminOpen)
-      }
+              {/* Кнопка відкриття меню */}
+              <button
+                onClick={() =>
+                  setAdminOpen(!adminOpen)
+                }
 
-      className="
-        flex items-center gap-2
-        font-semibold
-        text-[#3F5F56]
-        hover:text-[#2f4741]
-        transition
-      "
-    >
+                className="
+                  flex items-center gap-2
+                  font-semibold
+                  text-[#3F5F56]
+                  hover:text-[#2f4741]
+                  transition
+                "
+              >
 
-      ⚙️ Управління
+                ⚙️ Управління
 
-      {/* Іконка стрілки */}
-      <span
-        className={`
-          transition duration-300
-          ${adminOpen ? "rotate-180" : ""}
-        `}
-      >
-        ▼
-      </span>
+                {/* Іконка стрілки */}
+                <span
+                  className={`
+                    transition duration-300
+                    ${adminOpen ? "rotate-180" : ""}
+                  `}
+                >
+                  ▼
+                </span>
 
-    </button>
+              </button>
 
-    {/* Dropdown меню */}
-    {adminOpen && (
+              {/* Dropdown меню */}
+              {adminOpen && (
 
-      <div
-        className="
-          absolute right-0 mt-4
-          bg-white
-          border border-gray-100
-          rounded-2xl
-          shadow-2xl
-          w-64
-          overflow-hidden
-          z-50
-        "
-      >
+                <div
+                  className="
+                    absolute right-0 mt-4
+                    bg-white
+                    border border-gray-100
+                    rounded-2xl
+                    shadow-2xl
+                    w-64
+                    overflow-hidden
+                    z-50
+                  "
+                >
 
-        <div className="p-2">
+                  <div className="p-2">
 
-          {/* Управління товарами */}
-          <Link
-            href="/admin/products"
+                    {/* Управління товарами */}
+                    <Link
+                      href="/admin/products"
 
-            className="
-              flex items-center gap-3
-              px-4 py-3
-              rounded-xl
-              hover:bg-gray-100
-              transition
-            "
-          >
-            📦 Товари
-          </Link>
+                      className="
+                        flex items-center gap-3
+                        px-4 py-3
+                        rounded-xl
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      📦 Товари
+                    </Link>
 
-          {/* Управління замовленнями */}
-          <Link
-            href="/admin/orders"
+                    {/* Управління замовленнями */}
+                    <Link
+                      href="/admin/orders"
 
-            className="
-              flex items-center gap-3
-              px-4 py-3
-              rounded-xl
-              hover:bg-gray-100
-              transition
-            "
-          >
-            🧾 Замовлення
-          </Link>
+                      className="
+                        flex items-center gap-3
+                        px-4 py-3
+                        rounded-xl
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      🧾 Замовлення
+                    </Link>
 
-          {/* Управління категоріями */}
-          <Link
-            href="/admin/categories"
+                    {/* Управління категоріями */}
+                    <Link
+                      href="/admin/categories"
 
-            className="
-              flex items-center gap-3
-              px-4 py-3
-              rounded-xl
-              hover:bg-gray-100
-              transition
-            "
-          >
-            🗂 Категорії
-          </Link>
+                      className="
+                        flex items-center gap-3
+                        px-4 py-3
+                        rounded-xl
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      🗂 Категорії
+                    </Link>
 
-        </div>
+                  </div>
 
-      </div>
-    )}
+                </div>
+              )}
 
-  </div>
-)}
+            </div>
+          )}
 
           {/* Блок користувача */}
           {session ? (
@@ -251,7 +258,14 @@ export default function Header() {
               </Link>
 
               {/* Email користувача */}
-              <span className="text-gray-500 text-sm">
+              <span
+                className="
+                  text-gray-500 text-sm
+                  truncate
+                  max-w-[140px]
+                  hidden lg:block
+                "
+              >
 
                 {session.user?.email}
 
