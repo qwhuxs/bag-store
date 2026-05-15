@@ -149,7 +149,7 @@ export const authOptions:
   ],
 
   // Callback функції
-  callbacks: {
+callbacks: {
 
 // JWT callback
 async jwt({
@@ -180,49 +180,50 @@ async jwt({
         role?: string
       }).role
 
-    // Збереження фото профілю
+    // Фото тимчасово не зберігаємо в JWT
     ;(token as {
       picture?: string | null
-    }).picture =
-      user.image
+    }).picture = null
   }
 
   return token
 },
 
-    // Session callback
-    async session({
-      session,
-      token,
-    }) {
+// Session callback
+async session({
+  session,
+  token,
+}) {
 
-      // Якщо є user
-      if (session.user) {
+  // Якщо є user
+  if (session.user) {
 
-        // Передача id
-        session.user.id =
-          token.id as string
+    // Передача id
+    session.user.id =
+      token.id as string
 
-        // Передача email
-        session.user.email =
-          token.email as string
+    // Передача email
+    session.user.email =
+      token.email as string
 
-        // Передача ролі
-        (
-          session.user as {
-            role?: string
-          }
-        ).role =
-          token.role as string
-
-        // Передача фото профілю
-        session.user.image =
-          token.picture as string
+    // Передача ролі
+    (
+      session.user as {
+        role?: string
       }
+    ).role =
+      token.role as string
 
-      return session
-    },
-  },
+    // Фото профілю
+    session.user.image =
+      typeof token.picture === "string"
+        ? token.picture
+        : ""
+  }
+
+  return session
+},
+},
 
   // Кастомна сторінка логіну
   pages: {
