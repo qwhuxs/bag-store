@@ -117,12 +117,16 @@ export default function ReviewFormInline({
           p-3
           rounded-lg
           mb-3
+          break-words
+          resize-none
           focus:outline-none
           focus:ring-2
           focus:ring-[#3F5F56]
         "
 
         placeholder="Напишіть свій відгук..."
+
+        maxLength={300}
 
         value={comment}
 

@@ -91,9 +91,13 @@ export default function ReviewForm({
           p-3
           rounded
           mb-3
+          break-words
+          resize-none
         "
 
         placeholder="Напишіть свій відгук..."
+
+        maxLength={300}
 
         value={comment}
 
