@@ -41,6 +41,10 @@ export default function ProfileClient({
   const [avatar, setAvatar] =
     useState(user.image || "")
 
+  // Стан назви вибраного файлу
+  const [selectedFileName, setSelectedFileName] =
+    useState("")
+
   // Стан форми
   const [form, setForm] = useState({
 
@@ -77,41 +81,44 @@ export default function ProfileClient({
     })
   }
 
-  // Завантаження фото профілю
-  const handleImageUpload = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+// Завантаження фото профілю
+const handleImageUpload = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
 
-    // Отримання файлу
-    const file =
-      e.target.files?.[0]
+  // Отримання файлу
+  const file =
+    e.target.files?.[0]
 
-    if (!file) return
+  if (!file) return
 
-    // FileReader для конвертації фото
-    const reader =
-      new FileReader()
+  // Збереження назви файлу
+  setSelectedFileName(file.name)
 
-    reader.onloadend = () => {
+  // FileReader для конвертації фото
+  const reader =
+    new FileReader()
 
-      // Збереження фото
-      setAvatar(
-        reader.result as string
-      )
+  reader.onloadend = () => {
 
-      // Додавання фото у form
-      setForm({
+    // Preview аватара
+    setAvatar(
+      reader.result as string
+    )
 
-        ...form,
+    // НЕ зберігаємо base64 у session/database
+    setForm({
 
-        image:
-          reader.result as string,
-      })
-    }
+      ...form,
 
-    // Читання файлу
-    reader.readAsDataURL(file)
+      image:
+        user.image || "",
+    })
   }
+
+  // Читання файлу
+  reader.readAsDataURL(file)
+}
 
   // Збереження змін профілю
   const handleSave = async () => {
@@ -413,12 +420,38 @@ export default function ProfileClient({
                 Фото профілю
               </p>
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full"
-              />
+              <div className="flex items-center gap-4 flex-wrap">
+
+                <label
+                  className="
+                    cursor-pointer
+                    px-5 py-3
+                    rounded-2xl
+                    bg-[#1f2d4d]
+                    text-white
+                    hover:opacity-90
+                    transition
+                    font-medium
+                  "
+                >
+                  Обрати фото
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+
+                <span className="text-gray-500 text-sm">
+
+                  {selectedFileName ||
+                    "Файл не вибрано"}
+
+                </span>
+
+              </div>
 
             </div>
 
