@@ -292,9 +292,16 @@ export default async function ProductPage({
                 </div>
 
                 {/* Текст відгуку */}
-                <p className="text-gray-700 text-sm">
-                  {review.comment}
-                </p>
+                <p
+  className="
+    text-gray-700
+    text-sm
+    break-words
+    whitespace-pre-wrap
+  "
+>
+  {review.comment}
+</p>
 
               </div>
             ))}
