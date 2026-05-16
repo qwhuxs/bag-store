@@ -5,8 +5,10 @@ import { useState } from "react"
 
 export default function ReviewForm({
   productId,
+  isAuthenticated,
 }: {
   productId: string
+  isAuthenticated: boolean
 }) {
 
   // Стан тексту відгуку
@@ -56,6 +58,27 @@ export default function ReviewForm({
 
     // Оновлення сторінки
     location.reload()
+  }
+
+  // Якщо користувач не авторизований
+  if (!isAuthenticated) {
+    return (
+      <div
+        className="
+          mt-10
+          bg-white
+          p-5
+          rounded-xl
+          shadow
+          text-center
+        "
+      >
+        <p className="text-gray-600">
+          Увійдіть в акаунт,
+          щоб залишити відгук
+        </p>
+      </div>
+    )
   }
 
   return (

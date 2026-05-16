@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma"
 
+// NextAuth
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+
 // Функція для показу сторінки 404
 import { notFound } from "next/navigation"
 
@@ -10,7 +14,7 @@ import AddToCartButton from "@/components/AddToCartButton"
 import ReviewForm from "@/components/ReviewForm"
 
 // Компонент Next.js для оптимізації зображень
-import Image from "next/image" 
+import Image from "next/image"
 
 export default async function ProductPage({
   params,
@@ -20,6 +24,10 @@ export default async function ProductPage({
 
   // Отримання id товару з URL
   const { id } = await params
+
+  // Отримання сесії користувача
+  const session =
+    await getServerSession(authOptions)
 
   // Пошук товару в базі даних
   const product = await prisma.product.findUnique({
@@ -293,15 +301,15 @@ export default async function ProductPage({
 
                 {/* Текст відгуку */}
                 <p
-  className="
-    text-gray-700
-    text-sm
-    break-words
-    whitespace-pre-wrap
-  "
->
-  {review.comment}
-</p>
+                  className="
+                    text-gray-700
+                    text-sm
+                    break-words
+                    whitespace-pre-wrap
+                  "
+                >
+                  {review.comment}
+                </p>
 
               </div>
             ))}
@@ -310,7 +318,10 @@ export default async function ProductPage({
         )}
 
         {/* Форма додавання відгуку */}
-        <ReviewForm productId={product.id} />
+        <ReviewForm
+          productId={product.id}
+          isAuthenticated={!!session}
+        />
 
       </div>
     </div>
