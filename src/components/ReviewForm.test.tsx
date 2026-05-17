@@ -1,10 +1,15 @@
 import { render, screen } from "@testing-library/react"
 import ReviewForm from "./ReviewForm"
 
-test("renders review form", () => {
-  render(<ReviewForm productId="1" />)
+test("renders login message", () => {
+  render(
+    <ReviewForm
+      productId="1"
+      isAuthenticated={false}
+    />
+  )
 
   expect(
-    screen.getByText(/Додати відгук/i)
+    screen.getByText(/Увійдіть в акаунт/i)
   ).toBeInTheDocument()
 })
