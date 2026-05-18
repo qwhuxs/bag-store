@@ -1,3 +1,5 @@
+import React from "react"
+
 import "@testing-library/jest-dom"
 
 // fetch mock
@@ -15,7 +17,8 @@ jest.mock("next/image", () => ({
     fill,
     priority,
     ...props
-  }: any) => {
+  }: React.ImgHTMLAttributes<HTMLImageElement>) => {
+
     return <img {...props} />
   },
 }))
@@ -23,6 +26,7 @@ jest.mock("next/image", () => ({
 // next/navigation mock
 jest.mock("next/navigation", () => ({
   useRouter() {
+
     return {
       push: jest.fn(),
       refresh: jest.fn(),
