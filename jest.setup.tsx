@@ -13,11 +13,7 @@ global.fetch = jest.fn(() =>
 jest.mock("next/image", () => ({
   __esModule: true,
 
-  default: ({
-    fill,
-    priority,
-    ...props
-  }: React.ImgHTMLAttributes<HTMLImageElement>) => {
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
 
     return <img {...props} />
   },
