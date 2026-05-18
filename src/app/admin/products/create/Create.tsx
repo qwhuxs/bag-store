@@ -24,11 +24,11 @@ export default function Create({
   // Router для переходу між сторінками
   const router = useRouter()
 
-  // Стан форми для збереження введених даних
+  // Стан форми
   const [form, setForm] = useState({
     name: "",
     price: "",
-    image: "",
+    image: null as File | null,
     description: "",
     categoryId: "",
     stock: "",
@@ -43,8 +43,6 @@ export default function Create({
     >
   ) => {
 
-    // Оновлюється лише поле,
-    // яке зараз змінює користувач
     setForm({
       ...form,
       [e.target.name]: e.target.value,
@@ -53,44 +51,76 @@ export default function Create({
 
   // Функція створення товару
   const handleCreate = async () => {
+
     try {
 
+      // Створення FormData
+      const formData = new FormData()
+
+      formData.append(
+        "name",
+        form.name
+      )
+
+      formData.append(
+        "price",
+        form.price
+      )
+
+      formData.append(
+        "description",
+        form.description
+      )
+
+      formData.append(
+        "categoryId",
+        form.categoryId
+      )
+
+      formData.append(
+        "stock",
+        form.stock
+      )
+
+      // Додавання фото
+      if (form.image) {
+
+        formData.append(
+          "image",
+          form.image
+        )
+      }
+
       // POST-запит до API
-      const res = await fetch("/api/admin/product", {
-        method: "POST",
+      const res = await fetch(
+        "/api/admin/product",
+        {
+          method: "POST",
 
-        // Тип даних JSON
-        headers: {
-          "Content-Type": "application/json",
-        },
+          body: formData,
+        }
+      )
 
-        // Передача даних форми
-        body: JSON.stringify({
-
-          ...form,
-
-          // Перетворення ціни в number
-          price: Number(form.price),
-
-          // Перетворення stock в number
-          stock: Number(form.stock || 0),
-        }),
-      })
-
-      // Отримання відповіді сервера
+      // Отримання відповіді
       const data = await res.json()
 
-      // Якщо виникла помилка
+      // Якщо помилка
       if (!res.ok) {
-        console.error("SERVER ERROR:", data)
+
+        console.error(data)
+
         throw new Error(data.error)
       }
 
-      // Повідомлення про успішне створення
-      toast.success("Товар створено ✅")
+      // Повідомлення про успіх
+      toast.success(
+        "Товар створено ✅"
+      )
 
-      // Перехід до списку товарів
-      router.push("/admin/products")
+      // Перехід до товарів
+      router.push(
+        "/admin/products"
+      )
 
       // Оновлення сторінки
       router.refresh()
@@ -98,7 +128,9 @@ export default function Create({
     } catch {
 
       // Повідомлення про помилку
-      toast.error("Помилка при створенні ❌")
+      toast.error(
+        "Помилка при створенні ❌"
+      )
     }
   }
 
@@ -115,7 +147,7 @@ export default function Create({
 
       <div className="max-w-xl mx-auto">
 
-        {/* Заголовок сторінки */}
+        {/* Заголовок */}
         <div className="mb-8 text-center">
 
           <h1
@@ -126,7 +158,10 @@ export default function Create({
               justify-center gap-2
             "
           >
-            <span className="text-5xl">➕</span>
+            <span className="text-5xl">
+              ➕
+            </span>
+
             Додати товар
           </h1>
 
@@ -143,7 +178,7 @@ export default function Create({
 
         </div>
 
-        {/* Форма створення товару */}
+        {/* Форма */}
         <div
           className="
             bg-white
@@ -155,7 +190,7 @@ export default function Create({
           "
         >
 
-          {/* Поле назви */}
+          {/* Назва */}
           <input
             name="name"
             placeholder="Назва товару"
@@ -169,7 +204,7 @@ export default function Create({
             "
           />
 
-          {/* Поле ціни */}
+          {/* Ціна */}
           <input
             name="price"
             type="number"
@@ -184,21 +219,49 @@ export default function Create({
             "
           />
 
-          {/* Поле зображення */}
-          <input
-            name="image"
-            placeholder="Посилання на картинку"
-            onChange={handleChange}
+          {/* 📤 UPLOAD ФОТО */}
+<label
+  className="
+    flex items-center justify-center
+    gap-3
+    cursor-pointer
+    border-2 border-dashed
+    border-gray-300
+    hover:border-[#3F5F56]
+    bg-gray-50
+    hover:bg-gray-100
+    transition
+    rounded-2xl
+    p-5
+    text-gray-600
+    font-medium
+  "
+>
+  📷 {form.image
+    ? form.image.name
+    : "Вибрати фото"}
 
-            className="
-              w-full border p-3 rounded-lg
-              focus:ring-2
-              focus:ring-[#3F5F56]
-              outline-none transition
-            "
-          />
+  <input
+    type="file"
+    accept="image/*"
+    hidden
 
-          {/* Поле опису */}
+    onChange={(e) => {
+
+      const file =
+        e.target.files?.[0]
+
+      if (!file) return
+
+      setForm({
+        ...form,
+        image: file,
+      })
+    }}
+  />
+</label>
+
+          {/* Опис */}
           <textarea
             name="description"
             placeholder="Опис товару"
@@ -212,7 +275,7 @@ export default function Create({
             "
           />
 
-          {/* Поле кількості товару */}
+          {/* Кількість */}
           <input
             name="stock"
             type="number"
@@ -227,7 +290,7 @@ export default function Create({
             "
           />
 
-          {/* Вибір категорії */}
+          {/* Категорії */}
           <select
             name="categoryId"
             onChange={handleChange}
@@ -244,16 +307,18 @@ export default function Create({
               Оберіть категорію
             </option>
 
-            {/* Виведення категорій із бази даних */}
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
+              <option
+                key={cat.id}
+                value={cat.id}
+              >
                 {cat.name}
               </option>
             ))}
 
           </select>
 
-          {/* Кнопка створення */}
+          {/* Кнопка */}
           <button
             onClick={handleCreate}
 
@@ -264,7 +329,8 @@ export default function Create({
               to-[#D9A5A0]
               text-white py-3 rounded-lg
               font-semibold
-              hover:scale-105 hover:shadow-lg
+              hover:scale-105
+              hover:shadow-lg
               transition
             "
           >
