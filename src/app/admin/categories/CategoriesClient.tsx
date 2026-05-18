@@ -241,32 +241,43 @@ export default function CategoriesClient({
             "
           />
 
-          {/* 📤 UPLOAD ФОТО */}
-          <input
-            type="file"
+        {/* 📤 UPLOAD ФОТО */}
+<label
+  className="
+    flex items-center justify-center
+    gap-3
+    cursor-pointer
+    border-2 border-dashed
+    border-gray-300
+    hover:border-[#3F5F56]
+    bg-gray-50
+    hover:bg-gray-100
+    transition
+    rounded-2xl
+    p-5
+    text-gray-600
+    font-medium
+  "
+>
+  📷 {image
+    ? image.name
+    : "Вибрати фото"}
 
-            accept="image/*"
+  <input
+    type="file"
+    accept="image/*"
+    hidden
+    onChange={(e) => {
 
-            onChange={(e) => {
+      if (e.target.files?.[0]) {
 
-              // Якщо файл вибраний
-              if (
-                e.target.files?.[0]
-              ) {
-
-                // Збереження файлу
-                setImage(
-                  e.target.files[0]
-                )
-              }
-            }}
-
-            className="
-              border border-gray-200
-              p-4
-              rounded-2xl
-            "
-          />
+        setImage(
+          e.target.files[0]
+        )
+      }
+    }}
+  />
+</label>
 
           {/* ➕ BUTTON */}
           <button
